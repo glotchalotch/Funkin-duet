@@ -3455,6 +3455,17 @@ class PlayState extends MusicBeatState
 		if (!boyfriend.animation.curAnim.name.startsWith("sing"))
 		{
 			boyfriend.playAnim('idle');
+			if(boyfriend.duetChildren != null) {
+				for(c in boyfriend.duetChildren) {
+					c.dance();
+				}
+			}
+		} else {
+			if(boyfriend.duetChildren != null) {
+				for(c in boyfriend.duetChildren) {
+					if(!c.isDuetEnabled) c.dance();
+				}
+			}
 		}
 
 		if (curBeat % 8 == 7 && SONG.isHey)

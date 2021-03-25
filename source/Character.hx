@@ -875,9 +875,7 @@ class Character extends FlxSprite
 		if(duetChildren != null) {
 			for(c in duetChildren) {
 				if(c.isDuetEnabled && (AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN")) {
-					c.playAnim(AnimName);
-				} else {
-					c.playAnim("idle");
+					c.playAnim(AnimName, Force, Reversed, Frame);
 				}
 			}
 		}		
