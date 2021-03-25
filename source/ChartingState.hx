@@ -1041,7 +1041,7 @@ class ChartingState extends MusicBeatState
 			if(prevSelectedNote != curSelectedNote) {
 				if(curSelectedNote[3] == 0) curSelectedNote[3] = [];
 				duetEnableArr.splice(0, duetEnableArr.length);
-				curSelectedNoteDuetList.forEachExists(f -> curSelectedNoteDuetList.remove(f));
+				curSelectedNoteDuetList.forEach(f -> curSelectedNoteDuetList.members.splice(0, curSelectedNoteDuetList.length));
 				var casted:Array<String> = cast curSelectedNote[3];
 				if(casted.length > 0) {
 					for(gaming in casted) {
@@ -1279,7 +1279,6 @@ class ChartingState extends MusicBeatState
 
 	function autosaveSong():Void
 	{
-		trace(_song.player1duets);
 		FlxG.save.data.autosave = Json.stringify({
 			"song": _song
 		});
