@@ -38,10 +38,19 @@ class Character extends FlxSprite
 	public var like:String = "bf";
 	public var isDie:Bool = false;
 	public var isPixel:Bool = false;
+
+	public var isDuetChild = false;
+	public var isDuetEnabled = false;
+	public var duetChildOffset:Array<Float> = [0, 0];
+	public var duetChildren:Array<Character> = [];
+
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		animOffsets = new Map<String, Array<Dynamic>>();
 		super(x, y);
+		if(isDuetChild) {
+			setPosition(x + duetChildOffset[0], y + duetChildOffset[1]);
+		}
 
 		curCharacter = character;
 		this.isPlayer = isPlayer;
@@ -861,6 +870,13 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		for(c in duetChildren) {
+			if(c.isDuetEnabled) {
+				c.playAnim(AnimName);
+			} else {
+				c.playAnim("idle");
+			}
+		}
 		trace(AnimName);
 		animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";

@@ -2596,6 +2596,13 @@ class PlayState extends MusicBeatState
 					daNote.clipRect = swagRect;
 				}
 
+				if(daNote.mustPress && daNote.duetSwitch) {
+					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
+					for(child in children) {
+						child.isDuetEnabled = !child.isDuetEnabled;
+					}
+				}
+
 				if (!daNote.mustPress && daNote.wasGoodHit)
 				{
 					if (SONG.song != 'Tutorial')

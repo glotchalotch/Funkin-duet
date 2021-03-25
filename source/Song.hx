@@ -21,6 +21,7 @@ typedef SwagSong =
 	var speed:Float;
 
 	var player1:String;
+	var player1duets:Array<Array<Dynamic>>;
 	var player2:String;
 	var stage:String;
 	var gf:String;
@@ -40,6 +41,9 @@ class Song
 	public var speed:Float = 1;
 
 	public var player1:String = 'bf';
+	//i wanted to make this array a map so bad but apparently tjson cant handle parsing to maps
+	//"life is pain, i hate" - jerma
+	public var player1duets:Array<Array<Dynamic>> = [];
 	public var player2:String = 'dad';
 	public var stage:String = 'stage';
 	public var gf:String = 'gf';

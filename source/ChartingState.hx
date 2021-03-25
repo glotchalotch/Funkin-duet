@@ -1,5 +1,8 @@
 package;
 
+import flixel.addons.ui.FlxUIText;
+import flixel.addons.ui.interfaces.IFlxUIWidget;
+import flixel.addons.ui.FlxUIList;
 import Section.SwagSection;
 import Song.SwagSong;
 import Conductor.BPMChangeEvent;
@@ -98,6 +101,11 @@ class ChartingState extends MusicBeatState
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
 
+	var duetArr:Array<Dynamic> = []; // [character string, offset x, offset y]
+	var curSelectedNoteDuetList:FlxUIList;
+	var duetEnableArr:Array<FlxUIInputText> = [];
+	var prevSelectedNote:Array<Dynamic>;
+
 	override function create()
 	{
 		curSection = lastSection;
@@ -135,6 +143,7 @@ class ChartingState extends MusicBeatState
 				bpm: 150,
 				needsVoices: true,
 				player1: 'bf',
+				player1duets: [],
 				player2: 'dad',
 				stage: 'stage',
 				gf: 'gf',
@@ -146,6 +155,8 @@ class ChartingState extends MusicBeatState
 				uiType: 'normal'
 			};
 		}
+
+		if(_song.player1duets == null) _song.player1duets = [];
 
 		FlxG.mouse.visible = true;
 		//FlxG.save.bind('save1', 'bulbyVR');
@@ -298,6 +309,50 @@ class ChartingState extends MusicBeatState
 		var tab_group_char = new FlxUI(null, UI_box);
 		tab_group_char.name = "Char";
 
+		
+
+		var listTitleDuet:FlxUIText = new FlxUIText(10, 170, 0, "Duet Char");
+		var listTitleX:FlxUIText = new FlxUIText(80, 170, 0, "Offset X");
+		var listTitleY:FlxUIText = new FlxUIText(150, 170, 0, "Offset Y");
+		var duetList:FlxUIList = new FlxUIList(10, 190);
+		var offsetXList:FlxUIList = new FlxUIList(80, 190);
+		var offsetYList:FlxUIList = new FlxUIList(150, 190);
+		for(gaming in _song.player1duets) {
+			var text = new FlxUIInputText(0, 0, 60, gaming[0]);
+			text.name = 'duet_chars_${duetArr.length}';
+			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			stepper1.value = gaming[1];
+			stepper1.name = 'duet_x_${duetArr.length}';
+			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			stepper2.value = gaming[2];
+			stepper2.name = 'duet_y_${duetArr.length}';
+			duetList.add(text);
+			offsetXList.add(stepper1);
+			offsetYList.add(stepper2);
+			duetArr.push([text, stepper1, stepper2]);
+		}
+		var duetListAdd:FlxButton = new FlxButton(10, 320, "Add", () -> {
+			var text = new FlxUIInputText(0, 0, 60);
+			text.name = 'duet_chars_${duetArr.length}';
+			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			stepper1.name = 'duet_x_${duetArr.length}';
+			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			stepper2.name = 'duet_y_${duetArr.length}';
+			duetList.add(text);
+			offsetXList.add(stepper1);
+			offsetYList.add(stepper2);
+			_song.player1duets.push([text, stepper1, stepper2]);
+			duetArr.push([text, stepper1, stepper2]);
+		});
+		var duetListRemove:FlxButton = new FlxButton(100, 320, "Remove", () -> {
+			if(duetArr.length > 0) {
+				duetList.remove(duetArr[duetArr.length - 1][0], true);
+				offsetXList.remove(duetArr[duetArr.length - 1][1], true);
+				offsetYList.remove(duetArr[duetArr.length - 1][2], true);
+				_song.player1duets.pop();
+				duetArr.pop();
+			}
+		});
 
 		tab_group_char.add(uiTextField);
 		tab_group_char.add(cutsceneTextField);
@@ -305,6 +360,14 @@ class ChartingState extends MusicBeatState
 		tab_group_char.add(gfTextField);
 		tab_group_char.add(player1TextField);
 		tab_group_char.add(player2TextField);
+		tab_group_char.add(listTitleDuet);
+		tab_group_char.add(duetList);
+		tab_group_char.add(duetListAdd);
+		tab_group_char.add(duetListRemove);
+		tab_group_char.add(listTitleX);
+		tab_group_char.add(listTitleY);
+		tab_group_char.add(offsetXList);
+		tab_group_char.add(offsetYList);
 
 		UI_box.addGroup(tab_group_char);
 		UI_box.scrollFactor.set();
@@ -391,8 +454,31 @@ class ChartingState extends MusicBeatState
 
 		var applyLength:FlxButton = new FlxButton(100, 10, 'Apply');
 
+		var listTitleEnable:FlxUIText = new FlxUIText(10, 60, 0, "Toggle Duet Chars");
+		var duetEnableList:FlxUIList = new FlxUIList(10, 100);
+		curSelectedNoteDuetList = duetEnableList;
+		var duetListAdd:FlxButton = new FlxButton(10, 200, "Add", () -> {
+			var text = new FlxUIInputText();
+			text.name = 'duet_note_toggle_${duetEnableArr.length}';
+			curSelectedNoteDuetList.add(text);
+			duetEnableArr.push(text);
+			if(curSelectedNote[3] == 0) curSelectedNote[3] = [text.text];
+			else curSelectedNote[3].push(text.text);
+		});
+		var duetListRemove:FlxButton = new FlxButton(10, 230, "Remove", () -> {
+			if(duetEnableArr.length > 0) {
+				curSelectedNoteDuetList.remove(duetEnableArr[duetEnableArr.length - 1], true);
+				duetEnableArr.pop();
+				curSelectedNote[3].pop();
+			}
+		});
+
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(applyLength);
+		tab_group_note.add(listTitleEnable);
+		tab_group_note.add(duetEnableList);
+		tab_group_note.add(duetListAdd);
+		tab_group_note.add(duetListRemove);
 
 		UI_box.addGroup(tab_group_note);
 	}
@@ -517,6 +603,20 @@ class ChartingState extends MusicBeatState
 			} else if (wname == 'alt_anim_number')
 			{
 				_song.notes[curSection].altAnimNum = Std.int(nums.value);
+			} else if(wname.startsWith("duet_x_")) {
+				_song.player1duets[Std.parseInt(wname.split("_")[2])][1] = nums.value;
+			} else if(wname.startsWith("duet_y_")) {
+				_song.player1duets[Std.parseInt(wname.split("_")[2])][2] = nums.value;
+			}
+		}
+		else if(id == FlxUIInputText.CHANGE_EVENT) {
+			var input:FlxUIInputText = cast sender;
+			if(input.name.startsWith("duet_chars_")) {
+				if(data != null) {
+					_song.player1duets[Std.parseInt(input.name.split("_")[2])][0] = input.text;
+				}
+			} else if(input.name.startsWith("duet_note_toggle_")) {
+				curSelectedNote[3][Std.parseInt(input.name.split("_")[2])] = input.text;
 			}
 		}
 
@@ -662,7 +762,14 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		var shiftThing:Int = 1;
-		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus)
+		var thingInFocus:Bool = false;
+		for(gaming in duetEnableArr) {
+			if(gaming.hasFocus) thingInFocus = true;
+		}
+		if(!thingInFocus) for(gaming in duetArr) {
+			if(gaming[0].hasFocus) thingInFocus = true;
+		}
+		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus && !thingInFocus)
 		{
 			if (FlxG.keys.justPressed.SPACE)
 			{
@@ -930,8 +1037,23 @@ class ChartingState extends MusicBeatState
 
 	function updateNoteUI():Void
 	{
-		if (curSelectedNote != null)
+		if (curSelectedNote != null) {
 			stepperSusLength.value = curSelectedNote[2];
+			if(prevSelectedNote != curSelectedNote) {
+				if(curSelectedNote[3] == 0) curSelectedNote[3] = [];
+				duetEnableArr.splice(0, duetEnableArr.length);
+				curSelectedNoteDuetList.forEachExists(f -> curSelectedNoteDuetList.remove(f));
+				var casted:Array<String> = cast curSelectedNote[3];
+				for(gaming in casted) {
+					var text:FlxUIInputText = new FlxUIInputText(0, 0, null, gaming);
+					text.name = 'duet_note_toggle_${duetEnableArr.length}';
+					curSelectedNoteDuetList.add(text);
+					duetEnableArr.push(text);
+				}
+			}
+			
+			prevSelectedNote = curSelectedNote;
+		}
 	}
 
 	function updateGrid():Void
