@@ -341,7 +341,7 @@ class ChartingState extends MusicBeatState
 			duetList.add(text);
 			offsetXList.add(stepper1);
 			offsetYList.add(stepper2);
-			_song.player1duets.push([text, stepper1, stepper2]);
+			_song.player1duets.push([text.text, stepper1.value, stepper2.value]);
 			duetArr.push([text, stepper1, stepper2]);
 		});
 		var duetListRemove:FlxButton = new FlxButton(100, 320, "Remove", () -> {
@@ -1043,11 +1043,13 @@ class ChartingState extends MusicBeatState
 				duetEnableArr.splice(0, duetEnableArr.length);
 				curSelectedNoteDuetList.forEachExists(f -> curSelectedNoteDuetList.remove(f));
 				var casted:Array<String> = cast curSelectedNote[3];
-				for(gaming in casted) {
-					var text:FlxUIInputText = new FlxUIInputText(0, 0, null, gaming);
-					text.name = 'duet_note_toggle_${duetEnableArr.length}';
-					curSelectedNoteDuetList.add(text);
-					duetEnableArr.push(text);
+				if(casted.length > 0) {
+					for(gaming in casted) {
+						var text:FlxUIInputText = new FlxUIInputText(0, 0, null, gaming);
+						text.name = 'duet_note_toggle_${duetEnableArr.length}';
+						curSelectedNoteDuetList.add(text);
+						duetEnableArr.push(text);
+					}
 				}
 			}
 			
@@ -1192,13 +1194,13 @@ class ChartingState extends MusicBeatState
 		var noteData = Math.floor(FlxG.mouse.x / GRID_SIZE);
 		var noteSus = 0;
 
-		_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus]);
+		_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, []]);
 
 		curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
 
 		if (FlxG.keys.pressed.CONTROL)
 		{
-			_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus]);
+			_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, []]);
 		}
 
 		trace(noteStrum);
@@ -1277,6 +1279,7 @@ class ChartingState extends MusicBeatState
 
 	function autosaveSong():Void
 	{
+		trace(_song.player1duets);
 		FlxG.save.data.autosave = Json.stringify({
 			"song": _song
 		});
