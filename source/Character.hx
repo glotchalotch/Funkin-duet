@@ -733,7 +733,7 @@ class Character extends FlxSprite
 
 		dance();
 
-		if (isPlayer || isDuetChild)
+		if (isPlayer || (isDuetChild && like != "gf" && like != "gf-pixel"))
 		{
 			flipX = !flipX;
 			// Doesn't flip for BF, since his are already in the right place???
