@@ -1251,6 +1251,13 @@ class PlayState extends MusicBeatState
 				gf.x += 180;
 				gf.y += 300;
 		}
+		
+		for(child in SONG.player1duets) {
+			var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]]);
+			boyfriend.duetChildren.push(guy);
+			add(guy);
+		}
+
 		trace('befpre spoop check');
 		if (SONG.isSpooky) {
 			trace("WOAH SPOOPY");
@@ -1812,7 +1819,7 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, customImage, customXml, arrowEndsImage);
+				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, customImage, customXml, arrowEndsImage, songNotes[3] != null ? songNotes[3].length > 0 : false, songNotes[3]);
 				// so much more complicated but makes playstation like shit work
 				if (flippedNotes) {
 					if (swagNote.animation.curAnim.name == 'greenScroll') {
@@ -2596,11 +2603,12 @@ class PlayState extends MusicBeatState
 					daNote.clipRect = swagRect;
 				}
 
-				if(daNote.mustPress && daNote.duetSwitch) {
+				if(daNote.canBeHit && daNote.duetSwitch && !daNote.duetSwitchTriggered) {
 					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
 					for(child in children) {
 						child.isDuetEnabled = !child.isDuetEnabled;
 					}
+					daNote.duetSwitchTriggered = true;
 				}
 
 				if (!daNote.mustPress && daNote.wasGoodHit)

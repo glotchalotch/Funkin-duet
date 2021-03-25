@@ -41,8 +41,9 @@ class Note extends FlxSprite
 
 	public var duetSwitch:Bool = false;
 	public var duetSwitchChar:Array<String> = [];
+	public var duetSwitchTriggered = false;
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?customImage:Null<BitmapData>, ?customXml:Null<String>, ?customEnds:Null<BitmapData>)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?customImage:Null<BitmapData>, ?customXml:Null<String>, ?customEnds:Null<BitmapData>, ?duetSwitch:Bool = false, ?duetSwitchChar:Array<String>)
 	{
 		super();
 
@@ -51,6 +52,9 @@ class Note extends FlxSprite
 
 		this.prevNote = prevNote;
 		isSustainNote = sustainNote;
+
+		this.duetSwitch = duetSwitch;
+		this.duetSwitchChar = duetSwitchChar == null ? [] : duetSwitchChar;
 
 		x += 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
@@ -247,6 +251,7 @@ class Note extends FlxSprite
 		}
 	}
 
+	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);

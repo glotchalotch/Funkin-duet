@@ -44,10 +44,13 @@ class Character extends FlxSprite
 	public var duetChildOffset:Array<Float> = [0, 0];
 	public var duetChildren:Array<Character> = [];
 
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
+	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>)
 	{
 		animOffsets = new Map<String, Array<Dynamic>>();
 		super(x, y);
+		this.isDuetChild = isDuetChild;
+		this.duetChildren = duetChildren == null ? [] : duetChildren;
+		this.duetChildOffset = duetChildOffset;
 		if(isDuetChild) {
 			setPosition(x + duetChildOffset[0], y + duetChildOffset[1]);
 		}
@@ -730,7 +733,7 @@ class Character extends FlxSprite
 
 		dance();
 
-		if (isPlayer)
+		if (isPlayer || isDuetChild)
 		{
 			flipX = !flipX;
 			// Doesn't flip for BF, since his are already in the right place???
@@ -754,7 +757,6 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-
 		//curCharacter = curCharacter.trim();
 		//var charJson:Dynamic = Json.parse(Assets.getText('assets/images/custom_chars/custom_chars.json'));
 		//var animJson = File.getContent("assets/images/custom_chars/"+Reflect.field(charJson,curCharacter).like+".json");
@@ -870,13 +872,15 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		for(c in duetChildren) {
-			if(c.isDuetEnabled) {
-				c.playAnim(AnimName);
-			} else {
-				c.playAnim("idle");
+		if(duetChildren != null) {
+			for(c in duetChildren) {
+				if(c.isDuetEnabled && (AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN")) {
+					c.playAnim(AnimName);
+				} else {
+					c.playAnim("idle");
+				}
 			}
-		}
+		}		
 		trace(AnimName);
 		animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
