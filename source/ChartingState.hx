@@ -462,7 +462,7 @@ class ChartingState extends MusicBeatState
 			text.name = 'duet_note_toggle_${duetEnableArr.length}';
 			curSelectedNoteDuetList.add(text);
 			duetEnableArr.push(text);
-			if(curSelectedNote[3] == 0) curSelectedNote[3] = [text.text];
+			if(curSelectedNote[3] == null) curSelectedNote[3] = [text.text];
 			else curSelectedNote[3].push(text.text);
 		});
 		var duetListRemove:FlxButton = new FlxButton(10, 230, "Remove", () -> {
@@ -616,7 +616,7 @@ class ChartingState extends MusicBeatState
 					_song.player1duets[Std.parseInt(input.name.split("_")[2])][0] = input.text;
 				}
 			} else if(input.name.startsWith("duet_note_toggle_")) {
-				curSelectedNote[3][Std.parseInt(input.name.split("_")[2])] = input.text;
+				curSelectedNote[3][Std.parseInt(input.name.split("_")[3])] = input.text;
 			}
 		}
 
@@ -737,15 +737,6 @@ class ChartingState extends MusicBeatState
 			FlxG.switchState(new PlayState());
 		}
 
-		if (FlxG.keys.justPressed.E)
-		{
-			changeNoteSustain(Conductor.stepCrochet);
-		}
-		if (FlxG.keys.justPressed.Q)
-		{
-			changeNoteSustain(-Conductor.stepCrochet);
-		}
-
 		if (FlxG.keys.justPressed.TAB)
 		{
 			if (FlxG.keys.pressed.SHIFT)
@@ -771,6 +762,14 @@ class ChartingState extends MusicBeatState
 		}
 		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus && !thingInFocus)
 		{
+			if (FlxG.keys.justPressed.E)
+				{
+					changeNoteSustain(Conductor.stepCrochet);
+				}
+				if (FlxG.keys.justPressed.Q)
+				{
+					changeNoteSustain(-Conductor.stepCrochet);
+				}
 			if (FlxG.keys.justPressed.SPACE)
 			{
 				if (FlxG.sound.music.playing)
