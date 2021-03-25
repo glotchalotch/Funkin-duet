@@ -1041,7 +1041,7 @@ class ChartingState extends MusicBeatState
 			if(prevSelectedNote != curSelectedNote) {
 				if(curSelectedNote[3] == 0) curSelectedNote[3] = [];
 				duetEnableArr.splice(0, duetEnableArr.length);
-				curSelectedNoteDuetList.forEach(f -> curSelectedNoteDuetList.members.splice(0, curSelectedNoteDuetList.length));
+				curSelectedNoteDuetList.members.splice(0, curSelectedNoteDuetList.length);
 				var casted:Array<String> = cast curSelectedNote[3];
 				if(casted.length > 0) {
 					for(gaming in casted) {
