@@ -1251,12 +1251,6 @@ class PlayState extends MusicBeatState
 				gf.x += 180;
 				gf.y += 300;
 		}
-		
-		for(child in SONG.player1duets) {
-			var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]]);
-			boyfriend.duetChildren.push(guy);
-			add(guy);
-		}
 
 		trace('befpre spoop check');
 		if (SONG.isSpooky) {
@@ -1272,6 +1266,12 @@ class PlayState extends MusicBeatState
 		// Shitty layering but whatev it works LOL
 		if (curStage == 'limo')
 			add(limo);
+		trace('the boys');
+		for(child in SONG.player1duets) {
+			var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]]);
+			boyfriend.duetChildren.push(guy);
+			add(guy);
+		}
 		trace('dad');
 		add(dad);
 		trace('dy UWU');
