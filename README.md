@@ -1,11 +1,12 @@
 # Friday Night Funkin
 
-This is the repository for Friday Night Funkin Modding Plus, a mod for FNF to add more features for modders and players alike.
+This is the repository for Friday Night Funkin' Duet, a mod for FNF that's built on TOP of FNF Modding Plus.
+It lets you add multiple companions next to Boyfriend can sing along with him.
 
-Download on gamebanana: https://gamebanana.com/gamefiles/14264
+I made this for one specific thing I'm doing, but I thought other people might like to use it as well.
+
+Check out FNF Modding Plus: https://github.com/TheDrawingCoder-Gamer/Funkin
 Play the original game: https://github.com/ninjamuffin99/Funkin
-Need Help? FNF Modding Plus discord: https://discord.gg/96nV4Q5HMr
-Trello page (todo list): https://trello.com/b/cFjJJIjF/fnf-modding-plus
 ## Credits / shoutouts
 
 - [ninjamuffin99](https://twitter.com/ninja_muffin99) - Programmer
@@ -20,7 +21,7 @@ THESE INSTRUCTIONS ARE FOR COMPILING THE GAME'S SOURCE CODE!!!
 
 IF YOU WANT TO JUST DOWNLOAD AND INSTALL AND PLAY THE GAME NORMALLY, GO TO GAMEBANANA TO DOWNLOAD THE GAME FOR PC!!
 
-https://gamebanana.com/gamefiles/14264
+(Coming soon)
 
 IF YOU WANT TO COMPILE THE GAME YOURSELF, OR PLAY ON MAC OR LINUX, CONTINUE READING!!!
 

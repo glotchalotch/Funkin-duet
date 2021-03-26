@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 	<!-- i think that company and file is where the save data is stored -->
-	<app title="Friday Night Funkin' Modding Plus" file="Funkin" packageName="com.ninjamuffin99.funkin" main="Main" version="0.2.7.1-mod-2.2.0" company="ninjamuffin99" />
+	<app title="Friday Night Funkin' Modding Plus" file="Funkin" packageName="com.ninjamuffin99.funkin" main="Main" version="0.2.7.1-mod-2.2.0-duet-1.0.0" company="ninjamuffin99" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
@@ -56,6 +56,7 @@
 
 	<assets path="CHANGELOG.md"/>
 	<assets path="USER-README.txt"/>
+	<assets path="DUET-README.txt"/>
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY
 		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
 		THEN UHHH I USED THE NAME OF THE FONT WITH SETFORMAT() ON THE TEXT!!!
