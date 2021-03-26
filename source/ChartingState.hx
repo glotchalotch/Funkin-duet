@@ -744,6 +744,9 @@ class ChartingState extends MusicBeatState
 				vocals.stop();
 			}
 			FlxG.mouse.visible = false;
+			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
+			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
+			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
 			FlxG.switchState(new PlayState());
 		}
 
