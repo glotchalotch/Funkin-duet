@@ -105,6 +105,7 @@ class ChartingState extends MusicBeatState
 	var curSelectedNoteDuetList:FlxUIList;
 	var duetEnableArr:Array<FlxUIInputText> = [];
 	var prevSelectedNote:Array<Dynamic>;
+	var numericStepperTextArr:Array<FlxUIInputText> = [];
 
 	override function create()
 	{
@@ -320,10 +321,14 @@ class ChartingState extends MusicBeatState
 		for(gaming in _song.player1duets) {
 			var text = new FlxUIInputText(0, 0, 60, gaming[0]);
 			text.name = 'duet_chars_${duetArr.length}';
-			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			var text1 = new FlxUIInputText(0, 0, 30);
+			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2, 1, text1);
+			numericStepperTextArr.push(text1);
 			stepper1.value = gaming[1];
 			stepper1.name = 'duet_x_${duetArr.length}';
-			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			var text2 = new FlxUIInputText(0, 0, 30);
+			numericStepperTextArr.push(text2);
+			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2, 1, text2);
 			stepper2.value = gaming[2];
 			stepper2.name = 'duet_y_${duetArr.length}';
 			duetList.add(text);
@@ -334,9 +339,13 @@ class ChartingState extends MusicBeatState
 		var duetListAdd:FlxButton = new FlxButton(10, 320, "Add", () -> {
 			var text = new FlxUIInputText(0, 0, 60);
 			text.name = 'duet_chars_${duetArr.length}';
-			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			var text1 = new FlxUIInputText(0, 0, 30);
+			numericStepperTextArr.push(text1);
+			var stepper1 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2, 1, text1);
 			stepper1.name = 'duet_x_${duetArr.length}';
-			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2);
+			var text2 = new FlxUIInputText(0, 0, 30);
+			numericStepperTextArr.push(text2);
+			var stepper2 = new FlxUINumericStepper(0, 0, 0.01, 0, -999, 999, 2, 1, text2);
 			stepper2.name = 'duet_y_${duetArr.length}';
 			duetList.add(text);
 			offsetXList.add(stepper1);
@@ -351,6 +360,7 @@ class ChartingState extends MusicBeatState
 				offsetYList.remove(duetArr[duetArr.length - 1][2], true);
 				_song.player1duets.pop();
 				duetArr.pop();
+				numericStepperTextArr.splice(numericStepperTextArr.length - 2, 2);
 			}
 		});
 
@@ -760,6 +770,9 @@ class ChartingState extends MusicBeatState
 		if(!thingInFocus) for(gaming in duetArr) {
 			if(gaming[0].hasFocus) thingInFocus = true;
 		}
+		if(!thingInFocus) for(gaming in numericStepperTextArr) {
+			if(gaming.hasFocus) thingInFocus = true;
+		}
 		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus && !thingInFocus)
 		{
 			if (FlxG.keys.justPressed.E)
@@ -865,6 +878,13 @@ class ChartingState extends MusicBeatState
 
 				}
 			}
+			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
+			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
+			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
+		} else {
+			FlxG.sound.muteKeys = null;
+			FlxG.sound.volumeDownKeys = null;
+			FlxG.sound.volumeUpKeys = null;
 		}
 
 		_song.bpm = tempBpm;
