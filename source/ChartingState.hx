@@ -106,6 +106,7 @@ class ChartingState extends MusicBeatState
 	var duetEnableArr:Array<FlxUIInputText> = [];
 	var prevSelectedNote:Array<Dynamic>;
 	var numericStepperTextArr:Array<FlxUIInputText> = [];
+	var shouldDisableVolKeys:Bool = false;
 
 	override function create()
 	{
@@ -744,10 +745,21 @@ class ChartingState extends MusicBeatState
 				vocals.stop();
 			}
 			FlxG.mouse.visible = false;
+			shouldDisableVolKeys = false;
 			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
 			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
 			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
 			FlxG.switchState(new PlayState());
+		}
+
+		if(shouldDisableVolKeys) {
+			FlxG.sound.muteKeys = null;
+			FlxG.sound.volumeDownKeys = null;
+			FlxG.sound.volumeUpKeys = null;
+		} else {
+			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
+			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
+			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
 		}
 
 		if (FlxG.keys.justPressed.TAB)
@@ -881,14 +893,8 @@ class ChartingState extends MusicBeatState
 
 				}
 			}
-			FlxG.sound.muteKeys = [ZERO, NUMPADZERO];
-			FlxG.sound.volumeDownKeys = [MINUS, NUMPADMINUS];
-			FlxG.sound.volumeUpKeys = [PLUS, NUMPADPLUS];
-		} else {
-			FlxG.sound.muteKeys = null;
-			FlxG.sound.volumeDownKeys = null;
-			FlxG.sound.volumeUpKeys = null;
-		}
+			shouldDisableVolKeys = false;
+		} else shouldDisableVolKeys = true;
 
 		_song.bpm = tempBpm;
 
