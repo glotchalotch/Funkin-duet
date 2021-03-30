@@ -54,6 +54,7 @@ class Character extends FlxSprite
 		if(isDuetChild) {
 			setPosition(x + duetChildOffset[0], y + duetChildOffset[1]);
 		}
+		if(isPlayer) isDuetEnabled = true;
 
 		curCharacter = character;
 		this.isPlayer = isPlayer;
@@ -872,15 +873,15 @@ class Character extends FlxSprite
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
-		if(duetChildren != null) {
+		if(duetChildren != null && (AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN")) {
 			for(c in duetChildren) {
-				if(c.isDuetEnabled && (AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN")) {
+				if(c.isDuetEnabled) {
 					c.playAnim(AnimName, Force, Reversed, Frame);
 				}
 			}
 		}		
 		trace(AnimName);
-		animation.play(AnimName, Force, Reversed, Frame);
+		if(!((AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN") && !isDuetEnabled && isPlayer)) animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
 		if (animation.curAnim == null) {
 			// P A N I K

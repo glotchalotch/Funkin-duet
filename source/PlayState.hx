@@ -2607,6 +2607,7 @@ class PlayState extends MusicBeatState
 				}
 
 				if(daNote.canBeHit && daNote.duetSwitch && !daNote.duetSwitchTriggered) {
+					if(daNote.duetSwitchChar.contains("player")) boyfriend.isDuetEnabled = !boyfriend.isDuetEnabled;
 					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
 					for(child in children) {
 						child.isDuetEnabled = !child.isDuetEnabled;
@@ -3464,6 +3465,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 		} else {
+			if(!boyfriend.isDuetEnabled) boyfriend.dance();
 			if(boyfriend.duetChildren != null) {
 				for(c in boyfriend.duetChildren) {
 					if(!c.isDuetEnabled) c.dance();
