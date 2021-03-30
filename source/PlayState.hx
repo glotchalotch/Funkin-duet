@@ -2472,6 +2472,9 @@ class PlayState extends MusicBeatState
 
 				}
 
+				camFollow.x += PlayState.SONG.bfCamOffset[0];
+				camFollow.y += PlayState.SONG.bfCamOffset[1];
+
 				if (SONG.song.toLowerCase() == 'tutorial')
 				{
 					FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});

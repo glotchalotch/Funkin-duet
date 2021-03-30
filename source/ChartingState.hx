@@ -107,6 +107,9 @@ class ChartingState extends MusicBeatState
 	var prevSelectedNote:Array<Dynamic>;
 	var numericStepperTextArr:Array<FlxUIInputText> = [];
 	var shouldDisableVolKeys:Bool = false;
+	var bfCamOffsetStepper1:FlxUINumericStepper;
+	var bfCamOffsetStepper2:FlxUINumericStepper;
+	var bfCamOffsetStepperTextArr:Array<FlxUIInputText> = [new FlxUIInputText(0, 0, 30), new FlxUIInputText(0, 0, 30)];
 
 	override function create()
 	{
@@ -154,11 +157,13 @@ class ChartingState extends MusicBeatState
 				isSpooky: false,
 				isMoody: false,
 				cutsceneType: "none",
-				uiType: 'normal'
+				uiType: 'normal',
+				bfCamOffset: [0, 0]
 			};
 		}
 
 		if(_song.player1duets == null) _song.player1duets = [];
+		if(_song.bfCamOffset == null) _song.bfCamOffset = [0, 0];
 
 		FlxG.mouse.visible = true;
 		//FlxG.save.bind('save1', 'bulbyVR');
@@ -280,6 +285,16 @@ class ChartingState extends MusicBeatState
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
 
+		var bfCamText = new FlxUIText(50, 305, 0, "BF Cam Offset");
+		var bfCamText1 = new FlxUIText(10, 320, 0, "Offset X");
+		bfCamOffsetStepper1 = new FlxUINumericStepper(10, 340, 0.01, 0, -999, 999, 2, 1, bfCamOffsetStepperTextArr[0]);
+		bfCamOffsetStepper1.value = _song.bfCamOffset[0];
+		bfCamOffsetStepper1.name = "bf_cam_offset_x";
+		var bfCamText2 = new FlxUIText(90, 320, 0, "Offset Y");
+		bfCamOffsetStepper2 = new FlxUINumericStepper(90, 340, 0.01, 0, -999, 999, 2, 1, bfCamOffsetStepperTextArr[1]);
+		bfCamOffsetStepper2.value = _song.bfCamOffset[1];
+		bfCamOffsetStepper2.name = "bf_cam_offset_y";
+
 		tab_group_song.add(check_voices);
 		tab_group_song.add(check_mute_inst);
 		tab_group_song.add(isMoodyCheck);
@@ -291,6 +306,11 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(loadAutosaveBtn);
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
+		tab_group_song.add(bfCamOffsetStepper1);
+		tab_group_song.add(bfCamOffsetStepper2);
+		tab_group_song.add(bfCamText1);
+		tab_group_song.add(bfCamText2);
+		tab_group_song.add(bfCamText);
 
 		UI_box.addGroup(tab_group_song);
 		UI_box.scrollFactor.set();
@@ -618,6 +638,10 @@ class ChartingState extends MusicBeatState
 				_song.player1duets[Std.parseInt(wname.split("_")[2])][1] = nums.value;
 			} else if(wname.startsWith("duet_y_")) {
 				_song.player1duets[Std.parseInt(wname.split("_")[2])][2] = nums.value;
+			} else if(wname == "bf_cam_offset_x") {
+				_song.bfCamOffset[0] = nums.value;
+			} else if(wname == "bf_cam_offset_y") {
+				_song.bfCamOffset[1] = nums.value;
 			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT) {
@@ -788,6 +812,7 @@ class ChartingState extends MusicBeatState
 		if(!thingInFocus) for(gaming in numericStepperTextArr) {
 			if(gaming.hasFocus) thingInFocus = true;
 		}
+		if(!thingInFocus) if(bfCamOffsetStepperTextArr.filter(f -> f.hasFocus).length > 0) thingInFocus = true;
 		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus && !thingInFocus)
 		{
 			if (FlxG.keys.justPressed.E)
