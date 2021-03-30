@@ -14,6 +14,12 @@ When a note is selected, you can click Add or Remove to *toggle* the state of a 
 If they're disabled, they will do an idle animation as opposed to singing.
 All characters start disabled.
 The toggle is inclusive to the note, meaning that the toggle will affect them on that note, not after.
+Put "player" to toggle the player character's singing animations.
+
+In the Song tab:
+BF Cam Offset X/Y will change the position of the camera when it's focused on BF. This can be used to
+get a better frame of all the duet characters. Try to use small adjustments, especially in the X direction,
+as the stage bounds are not super big.
 
 If you find bugs or things to improve in this mod, report it at https://github.com/glotchalotch/Funkin-duet
 (MAKE SURE BUGS AREN'T IN THE VANILLA GAME OR MODDING PLUS BEFORE REPORTING!!!)
