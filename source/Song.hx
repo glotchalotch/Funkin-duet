@@ -24,6 +24,7 @@ typedef SwagSong =
 	var player1:String;
 	var player1duets:Array<Array<Dynamic>>;
 	var player2:String;
+	var player2duets:Array<Array<Dynamic>>;
 	var stage:String;
 	var gf:String;
 	var isMoody:Null<Bool>;
@@ -47,6 +48,7 @@ class Song
 	//"life is pain, i hate" - jerma
 	public var player1duets:Array<Array<Dynamic>> = [];
 	public var player2:String = 'dad';
+	public var player2duets:Array<Array<Dynamic>> = [];
 	public var stage:String = 'stage';
 	public var gf:String = 'gf';
 	public var isMoody:Null<Bool> = false;

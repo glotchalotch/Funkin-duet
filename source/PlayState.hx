@@ -1143,7 +1143,7 @@ class PlayState extends MusicBeatState
 		gf = new Character(400, 130, gfVersion);
 		gf.scrollFactor.set(0.95, 0.95);
 
-		dad = new Character(100, 100, SONG.player2);
+		dad = new Character(100, 100, SONG.player2, false, [], false, [0, 0], true);
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
@@ -1269,12 +1269,19 @@ class PlayState extends MusicBeatState
 		if(SONG.player1duets != null) {
 			trace('the boys');
 			for(child in SONG.player1duets) {
-				var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]]);
+				var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]], false, boyfriend);
 				boyfriend.duetChildren.push(guy);
 				add(guy);
 			}
 		}
-		
+		if(SONG.player2duets != null) {
+			trace('the boys season 2');
+			for(child in SONG.player2duets) {
+				var guy:Character = new Character(dad.x, dad.y, child[0], false, [], true, [child[1], child[2]], false, dad);
+				dad.duetChildren.push(guy);
+				add(guy);
+			}
+		}
 		trace('dad');
 		add(dad);
 		trace('dy UWU');
@@ -1579,6 +1586,17 @@ class PlayState extends MusicBeatState
 		{
 			dad.dance();
 			gf.dance();
+			boyfriend.dance();
+			if(dad.duetChildren != null) {
+				for(c in dad.duetChildren) {
+					c.dance();
+				}
+			}
+			if(boyfriend.duetChildren != null) {
+				for(c in boyfriend.duetChildren) {
+					c.dance();
+				}
+			}
 
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
@@ -2609,7 +2627,7 @@ class PlayState extends MusicBeatState
 					daNote.clipRect = swagRect;
 				}
 
-				if(daNote.canBeHit && daNote.duetSwitch && !daNote.duetSwitchTriggered) {
+				if(daNote.canBeHit && daNote.duetSwitch && !daNote.duetSwitchTriggered && daNote.mustPress) {
 					if(daNote.duetSwitchChar.contains("player")) boyfriend.isDuetEnabled = !boyfriend.isDuetEnabled;
 					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
 					for(child in children) {
@@ -2620,6 +2638,15 @@ class PlayState extends MusicBeatState
 
 				if (!daNote.mustPress && daNote.wasGoodHit)
 				{
+					if(daNote.duetSwitch && !daNote.duetSwitchTriggered) {
+						if(daNote.duetSwitchChar.contains("player")) dad.isDuetEnabled = !dad.isDuetEnabled;
+						var children:Array<Character> = dad.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
+						for(child in children) {
+							child.isDuetEnabled = !child.isDuetEnabled;
+						}
+						daNote.duetSwitchTriggered = true;
+					}
+
 					if (SONG.song != 'Tutorial')
 						camZooming = true;
 
@@ -3431,6 +3458,11 @@ class PlayState extends MusicBeatState
 			// Dad doesnt interupt his own notes
 			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection)
 				dad.dance();
+				if(dad.duetChildren != null) {
+					for(c in dad.duetChildren) {
+						c.dance();
+					}
+				}
 		}
 		// FlxG.log.add('change bpm' + SONG.notes[Std.int(curStep / 16)].changeBPM);
 		wiggleShit.update(Conductor.crochet);

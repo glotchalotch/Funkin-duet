@@ -41,10 +41,12 @@ class Character extends FlxSprite
 
 	public var isDuetChild = false;
 	public var isDuetEnabled = false;
+	public var isEnemy = false;
 	public var duetChildOffset:Array<Float> = [0, 0];
 	public var duetChildren:Array<Character> = [];
+	public var duetParent:Character;
 
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>)
+	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>, ?isEnemy:Bool = false, ?duetParent:Character)
 	{
 		animOffsets = new Map<String, Array<Dynamic>>();
 		super(x, y);
@@ -53,11 +55,13 @@ class Character extends FlxSprite
 		this.duetChildOffset = duetChildOffset;
 		if(isDuetChild) {
 			setPosition(x + duetChildOffset[0], y + duetChildOffset[1]);
+			this.duetParent = duetParent;
 		}
-		if(isPlayer) isDuetEnabled = true;
+		if(!isDuetChild) isDuetEnabled = true;
 
 		curCharacter = character;
 		this.isPlayer = isPlayer;
+		this.isEnemy = isEnemy;
 
 		var tex:FlxAtlasFrames;
 		antialiasing = true;
@@ -734,7 +738,7 @@ class Character extends FlxSprite
 
 		dance();
 
-		if (isPlayer || (isDuetChild && like != "gf" && like != "gf-pixel"))
+		if (isPlayer || (isDuetChild && like != "gf" && like != "gf-pixel" && !duetParent.isEnemy))
 		{
 			flipX = !flipX;
 			// Doesn't flip for BF, since his are already in the right place???
@@ -881,7 +885,9 @@ class Character extends FlxSprite
 			}
 		}		
 		trace(AnimName);
-		if(!((AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN") && !isDuetEnabled && isPlayer)) animation.play(AnimName, Force, Reversed, Frame);
+		if(AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN") {
+			if(isDuetEnabled) animation.play(AnimName, Force, Reversed, Frame);
+		} else animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
 		if (animation.curAnim == null) {
 			// P A N I K
