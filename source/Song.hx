@@ -20,6 +20,7 @@ typedef SwagSong =
 	var needsVoices:Bool;
 	var speed:Float;
 	var bfCamOffset:Array<Float>;
+	var enemyCamOffset:Array<Float>;
 
 	var player1:String;
 	var player1duets:Array<Array<Dynamic>>;
@@ -42,6 +43,7 @@ class Song
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;
 	public var bfCamOffset:Array<Float> = [0, 0];
+	public var enemyCamOffset:Array<Float> = [0, 0];
 
 	public var player1:String = 'bf';
 	//i wanted to make this array a map so bad but apparently tjson cant handle parsing to maps

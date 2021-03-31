@@ -2463,6 +2463,9 @@ class PlayState extends MusicBeatState
 				{
 					tweenCamIn();
 				}
+
+				camFollow.x += PlayState.SONG.enemyCamOffset[0];
+				camFollow.y += PlayState.SONG.enemyCamOffset[1];
 			}
 
 			if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)

@@ -112,6 +112,9 @@ class ChartingState extends MusicBeatState
 	var bfCamOffsetStepper1:FlxUINumericStepper;
 	var bfCamOffsetStepper2:FlxUINumericStepper;
 	var bfCamOffsetStepperTextArr:Array<FlxUIInputText> = [new FlxUIInputText(0, 0, 30), new FlxUIInputText(0, 0, 30)];
+	var enemyCamOffsetStepper1:FlxUINumericStepper;
+	var enemyCamOffsetStepper2:FlxUINumericStepper;
+	var enemyCamOffsetStepperTextArr:Array<FlxUIInputText> = [new FlxUIInputText(0, 0, 30), new FlxUIInputText(0, 0, 30)];
 	var duetList:FlxUIList;
 	var duetList2:FlxUIList;
 	var offsetXList:FlxUIList;
@@ -167,13 +170,15 @@ class ChartingState extends MusicBeatState
 				cutsceneType: "none",
 				uiType: 'normal',
 				bfCamOffset: [0, 0],
-				player2duets: []
+				player2duets: [],
+				enemyCamOffset: [0, 0]
 			};
 		}
 
 		if(_song.player1duets == null) _song.player1duets = [];
 		if(_song.player2duets == null) _song.player2duets = [];
 		if(_song.bfCamOffset == null) _song.bfCamOffset = [0, 0];
+		if(_song.enemyCamOffset == null) _song.enemyCamOffset = [0, 0];
 
 		FlxG.mouse.visible = true;
 		//FlxG.save.bind('save1', 'bulbyVR');
@@ -295,15 +300,25 @@ class ChartingState extends MusicBeatState
 		tab_group_song.name = "Song";
 		tab_group_song.add(UI_songTitle);
 
-		var bfCamText = new FlxUIText(50, 305, 0, "BF Cam Offset");
+		var bfCamText = new FlxUIText(40, 305, 0, "BF Cam Offset");
 		var bfCamText1 = new FlxUIText(10, 320, 0, "Offset X");
 		bfCamOffsetStepper1 = new FlxUINumericStepper(10, 340, 0.01, 0, -999, 999, 2, 1, bfCamOffsetStepperTextArr[0]);
 		bfCamOffsetStepper1.value = _song.bfCamOffset[0];
 		bfCamOffsetStepper1.name = "bf_cam_offset_x";
-		var bfCamText2 = new FlxUIText(90, 320, 0, "Offset Y");
-		bfCamOffsetStepper2 = new FlxUINumericStepper(90, 340, 0.01, 0, -999, 999, 2, 1, bfCamOffsetStepperTextArr[1]);
+		var bfCamText2 = new FlxUIText(80, 320, 0, "Offset Y");
+		bfCamOffsetStepper2 = new FlxUINumericStepper(80, 340, 0.01, 0, -999, 999, 2, 1, bfCamOffsetStepperTextArr[1]);
 		bfCamOffsetStepper2.value = _song.bfCamOffset[1];
 		bfCamOffsetStepper2.name = "bf_cam_offset_y";
+
+		var enemyCamText = new FlxUIText(175, 305, 0, "Enemy Cam Offset");
+		var enemyCamText1 = new FlxUIText(160, 320, 0, "Offset X");
+		enemyCamOffsetStepper1 = new FlxUINumericStepper(160, 340, 0.01, 0, -999, 999, 2, 1, enemyCamOffsetStepperTextArr[0]);
+		enemyCamOffsetStepper1.value = _song.enemyCamOffset[0];
+		enemyCamOffsetStepper1.name = "enemy_cam_offset_x";
+		var enemyCamText2 = new FlxUIText(230, 320, 0, "Offset Y");
+		enemyCamOffsetStepper2 = new FlxUINumericStepper(230, 340, 0.01, 0, -999, 999, 2, 1, enemyCamOffsetStepperTextArr[1]);
+		enemyCamOffsetStepper2.value = _song.enemyCamOffset[1];
+		enemyCamOffsetStepper2.name = "enemy_cam_offset_y";
 
 		tab_group_song.add(check_voices);
 		tab_group_song.add(check_mute_inst);
@@ -321,6 +336,11 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(bfCamText1);
 		tab_group_song.add(bfCamText2);
 		tab_group_song.add(bfCamText);
+		tab_group_song.add(enemyCamText);
+		tab_group_song.add(enemyCamText1);
+		tab_group_song.add(enemyCamText2);
+		tab_group_song.add(enemyCamOffsetStepper1);
+		tab_group_song.add(enemyCamOffsetStepper2);
 
 		UI_box.addGroup(tab_group_song);
 		UI_box.scrollFactor.set();
@@ -680,6 +700,10 @@ class ChartingState extends MusicBeatState
 				_song.player2duets[Std.parseInt(wname.split("_")[3])][1] = nums.value;
 			} else if(wname.startsWith("dad_duet_y_")) {
 				_song.player2duets[Std.parseInt(wname.split("_")[3])][2] = nums.value;
+			} else if(wname == "enemy_cam_offset_x") {
+				_song.enemyCamOffset[0] = nums.value;
+			} else if(wname == "enemy_cam_offset_y") {
+				_song.enemyCamOffset[1] = nums.value;
 			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT) {
@@ -855,6 +879,7 @@ class ChartingState extends MusicBeatState
 			if(gaming.hasFocus) thingInFocus = true;
 		}
 		if(!thingInFocus) if(bfCamOffsetStepperTextArr.filter(f -> f.hasFocus).length > 0) thingInFocus = true;
+		if(!thingInFocus) if(enemyCamOffsetStepperTextArr.filter(f -> f.hasFocus).length > 0) thingInFocus = true;
 		if(!thingInFocus) if(numericStepperTextArr2.filter(f -> f.hasFocus).length > 0) thingInFocus = true;
 		if(!thingInFocus) if(duetArr2.filter(f -> f.hasFocus).length > 0) thingInFocus = true;
 		if (!typingShit.hasFocus && !player1TextField.hasFocus && !player2TextField.hasFocus && !gfTextField.hasFocus && !stageTextField.hasFocus && !cutsceneTextField.hasFocus && !uiTextField.hasFocus && !thingInFocus)
