@@ -13,11 +13,11 @@ class Main extends Sprite
 		super();
 
 		#if desktop
-		var text:String = Assets.getText("assets/data/windowTitle.txt");
-		if(text != null) Application.current.window.title = text;
+		var settingsJson = CoolUtil.parseJson(Assets.getText("assets/data/options.json"));
+		Application.current.window.title = settingsJson.windowTitle;
 		#end
 
-		addChild(new FlxGame(0, 0, TitleState, 1, 60, 120, true));
+		addChild(new FlxGame(0, 0, TitleState, 1, 60, 120, settingsJson.skipSplash));
 
 		#if !mobile
 		addChild(new FPS(10, 3, 0xFFFFFF));

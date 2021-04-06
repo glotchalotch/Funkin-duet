@@ -4,5 +4,7 @@
     "alwaysDoCutscenes": false,
     "allowEditOptions": true,
     "useSaveDataMenu": true, 
-    "preferredSave": 0
+    "preferredSave": 0,
+    "windowTitle": "Friday Night Funkin' Duet",
+    "skipSplash": true
 }
