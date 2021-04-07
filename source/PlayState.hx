@@ -2464,8 +2464,10 @@ class PlayState extends MusicBeatState
 					tweenCamIn();
 				}
 
-				camFollow.x += PlayState.SONG.enemyCamOffset[0];
-				camFollow.y += PlayState.SONG.enemyCamOffset[1];
+				if(PlayState.SONG.enemyCamOffset != null) {
+					camFollow.x += PlayState.SONG.enemyCamOffset[0];
+					camFollow.y += PlayState.SONG.enemyCamOffset[1];
+				}
 			}
 
 			if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
@@ -2493,8 +2495,10 @@ class PlayState extends MusicBeatState
 
 				}
 
-				camFollow.x += PlayState.SONG.bfCamOffset[0];
-				camFollow.y += PlayState.SONG.bfCamOffset[1];
+				if(PlayState.SONG.bfCamOffset != null) {
+					camFollow.x += PlayState.SONG.bfCamOffset[0];
+					camFollow.y += PlayState.SONG.bfCamOffset[1];
+				}
 
 				if (SONG.song.toLowerCase() == 'tutorial')
 				{
