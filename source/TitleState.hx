@@ -27,6 +27,14 @@ import haxe.Json;
 import tjson.TJSON;
 using StringTools;
 
+typedef IntroTextJson = 
+{
+	var introText:Array<String>;
+	var ngText:Array<String>;
+	var showNgSprite:Bool;
+	var titleText:Array<String>;
+}
+
 class TitleState extends MusicBeatState
 {
 	static var initialized:Bool = false;
@@ -42,12 +50,16 @@ class TitleState extends MusicBeatState
 	var wackyEndBeat:Int = 0;
 	var wackyImage:FlxSprite;
 	var coolDudes:Array<String> = [];
+	var wackyJson:IntroTextJson;
+
 	override public function create():Void
 	{
 		Polymod.init({modRoot: "mods", dirs: ['introMod']});
 
 
 		PlayerSettings.init();
+
+		wackyJson = cast CoolUtil.parseJson(Assets.getText("assets/data/introText.json"));
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
@@ -197,9 +209,7 @@ class TitleState extends MusicBeatState
 
 	function getIntroTextShit():Array<Array<String>>
 	{
-		var fullText:String = Assets.getText('assets/data/introText.txt');
-
-		var firstArray:Array<String> = fullText.split('\n');
+		var firstArray:Array<String> = wackyJson.introText;
 		var swagGoodArray:Array<Array<String>> = [];
 
 		for (i in firstArray)
@@ -324,10 +334,10 @@ class TitleState extends MusicBeatState
 				// credTextShit.text = 'In association \nwith';
 				// credTextShit.screenCenter();
 				case 5:
-					createCoolText(['In association', 'with']);
+					createCoolText(wackyJson.ngText[0].split("--"));
 				case 7:
-					addMoreText('newgrounds');
-					ngSpr.visible = true;
+					addMoreText(wackyJson.ngText[1]);
+					ngSpr.visible = wackyJson.showNgSprite;
 				// credTextShit.text += '\nNewgrounds';
 				case 8:
 					deleteCoolText();
@@ -348,13 +358,13 @@ class TitleState extends MusicBeatState
 				// credTextShit.text = "Friday";
 				// credTextShit.screenCenter();
 				case 13:
-					addMoreText('Friday');
+					addMoreText(wackyJson.titleText[0]);
 				// credTextShit.visible = true;
 				case 14:
-					addMoreText('Night');
+					addMoreText(wackyJson.titleText[1]);
 				// credTextShit.text += '\nNight';
 				case 15:
-					addMoreText('Funkin'); // credTextShit.text += '\nFunkin';
+					addMoreText(wackyJson.titleText[2]); // credTextShit.text += '\nFunkin';
 
 				case 16:
 					skipIntro();
@@ -374,11 +384,11 @@ class TitleState extends MusicBeatState
 					case 1:
 						deleteCoolText();
 					case 2:
-						addMoreText('Friday');
+						addMoreText(wackyJson.titleText[0]);
 					case 3:
-						addMoreText('Night');
+						addMoreText(wackyJson.titleText[1]);
 					case 4:
-						addMoreText('Funkin');
+						addMoreText(wackyJson.titleText[2]);
 					case 5:
 						skipIntro();
 				}
