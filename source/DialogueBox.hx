@@ -58,6 +58,7 @@ class DialogueBox extends FlxSpriteGroup
 	var font:String = "pixel.otf";
 	var senpaiVisible = true;
 	var sided:Bool = false;
+	var curFlipped:Bool = false;
 	public function new(talkingRight:Bool = true, ?dialogueList:Array<String>)
 	{
 		super();
@@ -651,6 +652,16 @@ class DialogueBox extends FlxSpriteGroup
 					portraitCustom.setGraphicSize(Std.int(portraitCustom.width * 0.9));
 				portraitCustom.visible = false;
 		}
+		if(curFlipped) {
+			switch(curCharacter) {
+				case "dad":
+					portraitLeft.flipX = true;
+				case "bf":
+					portraitRight.flipX = true;
+				default:
+					portraitCustom.flipX = true;
+			}
+		}
 		// swagDialogue.text = ;
 		if (portraitCustom != null) {
 			portraitCustom.updateHitbox();
@@ -714,6 +725,11 @@ class DialogueBox extends FlxSpriteGroup
 	{
 		var splitName:Array<String> = dialogueList[0].split(":");
 		curCharacter = splitName[1];
-		dialogueList[0] = dialogueList[0].substr(splitName[1].length + 2).trim();
+		var lengthAdd:Int = 2;
+		if(~/^:.+:f /.match(dialogueList[0])) {
+			curFlipped = true;
+			lengthAdd = 3;
+		}
+		dialogueList[0] = dialogueList[0].substr(splitName[1].length + lengthAdd).trim();
 	}
 }
