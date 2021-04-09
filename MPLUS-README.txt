@@ -11,8 +11,9 @@ How to use:
     Rename them to the name of the song with hyphens ("-") with the suffix
     (like Life Will Change > Life-Will-Change)
     Drag them out to assets/music
-    Go to freeplaySonglist.txt
-    Add the song name to it, with the same name as the music files
+    Go to freeplaySongJson.jsonc
+    Add a section for your mod if you want to
+    Add the song name(s) to it, with the same name as the music files
     (like Life Will Change > Life-Will-Change)
     Launch FNF
     For each difficulty:
@@ -27,12 +28,13 @@ How to use:
     After finishing this add the saved file to the folder and overwrite.
   Custom Characters:
     Go to assets/images/custom_chars
+    Make a new folder for your character with the name of the character in lowercase-dashed-format
     Drag in the mod png and xml (if no xml grab the base game one)
-    Rename them to the name of the character (should be lowercase)
+    Rename them to char.png and char.xml respectively
     If there are custom icons:
       Add the iconGrid.png
-      Rename to (character name)_icons.png
-    Open custom_chars.json
+      Rename to icons.png
+    Open custom_chars.jsonc in the custom_chars directory
     Add a new property:
       "(character name)": {
         "like": "(character this is based on)",
@@ -40,23 +42,22 @@ How to use:
       }
     Remember your commas!
     Characters also now support portraits.
-    If your character has a portrait drag it in and rename it to your character
-    name + '-portrait'
+    If your character has a portrait drag it in and rename it to portrait.png
     They also support custom death sprites.
     If your character is based on pixel bf:
     drag in the death png + xml
-    rename to '(character name)-dead'
+    rename to 'dead'
     If it is based on bf: Great! Everything is already done for custom death!
     To apply these characters:
     Open a song
     Hit the '7' key
     go to the song tab
-    Click on one of the top two dropdowns
+    Click on one of the top two text boxes with character names in them
     Select your custom character
     Hit save and save the json. Remember difficulty prefixes!
     Custom GF:
       Follow above instructions but instead of choosing one of the top two
-      dropdowns choose the one that says gf.
+      text boxes choose the one that says gf.
       Choose custom gf
       Hit save and save the json. Remember difficulty prefixes!
   Custom Stages:
@@ -113,13 +114,15 @@ How to use:
     "
     :dad: Senpai speaking
     :bf: Bf speaking
+    :char-x: character x speaking
+    :char-x:f character x with their portrait flipped (this will put them on bf's side unless you're flipping bf for some reason)
     "
     Also add a Lunchbox.ogg if you want dialog sound
     To apply these cutscenes:
     Open a song
     Hit the '7' key
     go to the song tab
-    Click on the drop down that says something like 'senpai'.
+    Go to the text box that says "none" and edit it to the cutscene type you want.
     Select your custom stage.
     Hit save and save the json. Remember difficulty prefixes!
   Custom UI:
@@ -157,3 +160,21 @@ How to use:
     default to the position in the list - 1
     For songs you have to make a new json using the chart editor and rename
     the file with "-(difficulty name)" at the end.
+  Custom Intro Text:
+    To change the intro text, open assets/data/introText.json.
+    "introText" is an array that contains the random splash text
+    (it takes over the functionality of introText.txt)
+    "ngText" changes the text normally used for "In Association with Newgrounds".
+    (Maximum of 2 entries, line break using --)
+    "showNgSprite" determines whether to show the newgrounds logo sprite
+    "titleText" controls the text that normally says "Friday Night Funkin"
+    (Maximum of 3 entries)
+  Options.json:
+    "skipVictoryScreen" skips the victory screen after a song
+    "skipModifierMenu" skips the pre-song menu
+    "alwaysDoCutscenes" forces cutscenes to play in freeplay mode
+    "allowEditOptions" allows adding songs/weeks/chars from the options menu
+    "useSaveDataMenu" determines whether to show the options menu
+    "preferredSave" is which save slot to use by default (i think)
+    "windowTitle" changes the window title on startup
+    "skipSplash" skips the HaxeFlixel splash screen
