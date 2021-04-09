@@ -1,6 +1,6 @@
 # Friday Night Funkin
 
-This is the repository for Friday Night Funkin' Duet, a mod for FNF that's built on TOP of FNF Modding Plus.
+This is the repository for Friday Night Funkin' Duet+, a mod for FNF that's built on TOP of FNF Modding Plus.
 
 It lets you add multiple companions next to Boyfriend so they can sing along with him.
 
