@@ -55,7 +55,7 @@
 	<assets path="assets/sounds" include="*.ogg" unless="web" />
 
 	<assets path="CHANGELOG.md"/>
-	<assets path="USER-README.txt"/>
+	<assets path="MPLUS-README.txt"/>
 	<assets path="DUET-README.txt"/>
 	<assets path=".disable_gb1click_filedaddy"/>
 	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY
