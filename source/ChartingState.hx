@@ -130,6 +130,9 @@ class ChartingState extends MusicBeatState
 	var duetListAdd:FlxButton;
 	var duetListRemove:FlxButton;
 	var listTitleEnable:FlxUIText;
+	var copyFromMainButton:FlxButton;
+	var copyFromCharButton:FlxButton;
+	var copyFromCharText:FlxUIInputText;
 
 	override function create()
 	{
@@ -477,7 +480,7 @@ class ChartingState extends MusicBeatState
 			}
 		});
 
-		var backToMainButton:FlxButton = new FlxButton(150, 20, "Back to main chart", () -> subSongUI(null));
+		var backToMainButton:FlxButton = new FlxButton(250, 190, "Main Chart", () -> subSongUI(null));
 
 		tab_group_char.add(uiTextField);
 		tab_group_char.add(cutsceneTextField);
@@ -570,6 +573,10 @@ class ChartingState extends MusicBeatState
 			
 		});
 
+		copyFromMainButton = new FlxButton(110, 150, "Copy main", () -> copyFrom(null, Std.int(stepperCopy.value)));
+		copyFromCharButton = new FlxButton(110, 170, "Copy char:", () -> copyFrom(copyFromCharText.text, Std.int(stepperCopy.value)));
+		copyFromCharText = new FlxUIInputText(200, 175);
+
 		check_mustHitSection = new FlxUICheckBox(10, 30, null, null, "Must hit section", 100);
 		check_mustHitSection.name = 'check_mustHit';
 		check_mustHitSection.checked = true;
@@ -591,6 +598,9 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(copyButton);
 		tab_group_section.add(clearSectionButton);
 		tab_group_section.add(swapSection);
+		tab_group_section.add(copyFromMainButton);
+		tab_group_section.add(copyFromCharButton);
+		tab_group_section.add(copyFromCharText);
 
 		UI_box.addGroup(tab_group_section);
 	}
@@ -827,6 +837,16 @@ class ChartingState extends MusicBeatState
 						duetListAdd.visible = true;
 						duetListRemove.visible = true;
 						listTitleEnable.visible = true;
+					}
+				case "Section":
+					if(curSubSongChar != null) {
+						copyFromMainButton.visible = true;
+						copyFromCharButton.visible = true;
+						copyFromCharText.visible = true;
+					} else {
+						copyFromMainButton.visible = false;
+						copyFromCharButton.visible = false;
+						copyFromCharText.visible = false;
 					}
 			}
 			if(menu.selected_tab_id == "Char") {
@@ -1246,6 +1266,35 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		
+		updateGrid();
+	}
+
+	function copyFrom(char:String, ?sectionNum:Int = 1) {
+		var daSec = FlxMath.maxInt(curSection, sectionNum);
+
+		var index:Int = findSubSongSectionIndex(curSubSongChar, curSection);
+		if(char == null) {
+			for (note in _song.notes[daSec - sectionNum].sectionNotes)
+			{
+				var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
+
+				var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3] == null ? [] : note[3]];
+				_song.notes[daSec].duetSectionNotes[index][1].push(copiedNote);
+			}
+		} else {
+			var charIndex:Int = findSubSongSectionIndex(char, daSec - sectionNum);
+			if(charIndex != -1) {
+				for (note in cast(_song.notes[daSec - sectionNum].duetSectionNotes[charIndex][1], Array<Dynamic>))
+				{
+					var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
+
+					var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3] == null ? [] : note[3]];
+					_song.notes[daSec].duetSectionNotes[index][1].push(copiedNote);
+				}
+			}
+			
+		}
+
 		updateGrid();
 	}
 
