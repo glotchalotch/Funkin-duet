@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUIText;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
 import flixel.addons.ui.FlxUIList;
@@ -101,7 +102,7 @@ class ChartingState extends MusicBeatState
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
 
-	var duetArr:Array<Dynamic> = []; // [character string, offset x, offset y]
+	var duetArr:Array<Dynamic> = []; // [character string, offset x, offset y, is sync]
 	var duetArr2:Array<Dynamic> = [];
 	var curSelectedNoteDuetList:FlxUIList;
 	var duetEnableArr:Array<FlxUIInputText> = [];
@@ -121,6 +122,14 @@ class ChartingState extends MusicBeatState
 	var offsetXList2:FlxUIList;
 	var offsetYList:FlxUIList;
 	var offsetYList2:FlxUIList;
+	var syncCheckList:FlxUIList;
+	var syncCheckList2:FlxUIList;
+	var chartButtonList:FlxUIList;
+	var chartButtonList2:FlxUIList;
+	var curSubSongChar:String;
+	var duetListAdd:FlxButton;
+	var duetListRemove:FlxButton;
+	var listTitleEnable:FlxUIText;
 
 	override function create()
 	{
@@ -214,7 +223,7 @@ class ChartingState extends MusicBeatState
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
 
-		UI_box.resize(300, 400);
+		UI_box.resize(425, 400);
 		UI_box.x = FlxG.width / 2;
 		UI_box.y = 20;
 		add(UI_box);
@@ -349,7 +358,7 @@ class ChartingState extends MusicBeatState
 	}
 
 	function addCharsListValue(isInitial:Bool, forBF:Bool, ?gaming:Array<Dynamic>) {
-		if(gaming == null) gaming = ["", 0, 0];
+		if(gaming == null) gaming = ["", 0, 0, true];
 		var text = new FlxUIInputText(0, 0, 60, gaming[0]);
 		text.name = forBF ? 'duet_chars_${duetArr.length}' : 'dad_duet_chars_${duetArr2.length}';
 		var text1 = new FlxUIInputText(0, 0, 30);
@@ -366,11 +375,38 @@ class ChartingState extends MusicBeatState
 		forBF ? duetList.add(text) : duetList2.add(text);
 		forBF ? offsetXList.add(stepper1) : offsetXList2.add(stepper1);
 		forBF ? offsetYList.add(stepper2) : offsetYList2.add(stepper2);
+		var checkbox = new FlxUICheckBox(0, 0, null, null, ""); //for some reason you have to have a label set even though it says it's nullable??
+		checkbox.name = forBF ? 'duet_sync_check_${duetArr.length}' : 'dad_duet_sync_check_${duetArr2.length}';
+		if(gaming[3] == null) gaming[3] = true;
+		checkbox.checked = gaming[3];
+		checkbox.button.resize(checkbox.box.width, checkbox.box.height);
+		forBF ? syncCheckList.add(checkbox) : syncCheckList2.add(checkbox);
+		var button = new FlxButton(0, 0, "Chart", () -> {
+			subSongUI(text.text);
+		});
+		button.setSize(button.width, stepper1.height);
+		forBF ? chartButtonList.add(button) : chartButtonList2.add(button);
 		if(!isInitial) {
-			if(forBF) _song.player1duets.push([text.text, stepper1.value, stepper2.value]);
-			else _song.player2duets.push([text.text, stepper1.value, stepper2.value]);
+			if(forBF) _song.player1duets.push([text.text, stepper1.value, stepper2.value, checkbox.checked]);
+			else _song.player2duets.push([text.text, stepper1.value, stepper2.value, checkbox.checked]);
+			refreshChartButtons(forBF);
 		}
-		forBF ? duetArr.push([text, stepper1, stepper2]) : duetArr2.push([text, stepper1, stepper2]);
+		forBF ? duetArr.push([text, stepper1, stepper2, checkbox, button]) : duetArr2.push([text, stepper1, stepper2, checkbox, button]);
+	}
+
+	function refreshChartButtons(forBF:Bool) {
+		// the list needs to be refreshed each time a list item is added :thumbsup:
+		if(forBF) {
+			for(i in 0...chartButtonList.members.length) {
+				var check:FlxUICheckBox = cast syncCheckList.members[i];
+				chartButtonList.members[i].visible = !check.checked;
+			}
+		} else {
+			for(i in 0...chartButtonList2.members.length) {
+				var check:FlxUICheckBox = cast syncCheckList2.members[i];
+				chartButtonList2.members[i].visible = !check.checked;
+			}
+		}
 	}
 
 	function addCharsUI():Void
@@ -392,44 +428,56 @@ class ChartingState extends MusicBeatState
 		var listTitleDuet2:FlxUIText = new FlxUIText(10, 210, 0, "Enemy Duet");
 		var listTitleX2:FlxUIText = new FlxUIText(80, 210, 0, "Offset X");
 		var listTitleY2:FlxUIText = new FlxUIText(150, 210, 0, "Offset Y");
+		var listTitleSync:FlxUIText = new FlxUIText(215, 70, 0, "Sync");
+		var listTitleSync2:FlxUIText = new FlxUIText(215, 210, 0, "Sync");
 		duetList = new FlxUIList(10, 90);
 		duetList2 = new FlxUIList(10, 230);
 		offsetXList = new FlxUIList(80, 90);
 		offsetXList2 = new FlxUIList(80, 230);
 		offsetYList = new FlxUIList(150, 90);
 		offsetYList2 = new FlxUIList(150, 230);
+		syncCheckList = new FlxUIList(220, 90);
+		syncCheckList2 = new FlxUIList(220, 230);
+		chartButtonList = new FlxUIList(250, 90);
+		chartButtonList2 = new FlxUIList(250, 230);
 		for(gaming in _song.player1duets) {
 			addCharsListValue(true, true, gaming);
 		}
 		for(gaming in _song.player2duets) {
 			addCharsListValue(true, false, gaming);
 		}
-		var duetListAdd:FlxButton = new FlxButton(215, 70, "Add", () -> {
+		var duetListAdd:FlxButton = new FlxButton(250, 70, "Add", () -> {
 			addCharsListValue(false, true);
 		});
-		var duetListRemove:FlxButton = new FlxButton(215, 90, "Remove", () -> {
+		var duetListRemove:FlxButton = new FlxButton(335, 70, "Remove", () -> {
 			if(duetArr.length > 0) {
 				duetList.remove(duetArr[duetArr.length - 1][0], true);
 				offsetXList.remove(duetArr[duetArr.length - 1][1], true);
 				offsetYList.remove(duetArr[duetArr.length - 1][2], true);
+				syncCheckList.remove(duetArr[duetArr.length - 1][3], true);
+				chartButtonList.remove(duetArr[duetArr.length - 1][4], true);
 				_song.player1duets.pop();
 				duetArr.pop();
 				numericStepperTextArr.splice(numericStepperTextArr.length - 2, 2);
 			}
 		});
-		var duetListAdd2:FlxButton = new FlxButton(215, 210, "Add", () -> {
+		var duetListAdd2:FlxButton = new FlxButton(250, 210, "Add", () -> {
 			addCharsListValue(false, false);
 		});
-		var duetListRemove2:FlxButton = new FlxButton(215, 230, "Remove", () -> {
+		var duetListRemove2:FlxButton = new FlxButton(335, 210, "Remove", () -> {
 			if(duetArr2.length > 0) {
 				duetList2.remove(duetArr2[duetArr2.length - 1][0], true);
 				offsetXList2.remove(duetArr2[duetArr2.length - 1][1], true);
 				offsetYList2.remove(duetArr2[duetArr2.length - 1][2], true);
+				syncCheckList2.remove(duetArr2[duetArr2.length - 1][3], true);
+				chartButtonList2.remove(duetArr2[duetArr2.length - 1][4], true);
 				_song.player2duets.pop();
 				duetArr2.pop();
 				numericStepperTextArr2.splice(numericStepperTextArr2.length - 2, 2);
 			}
 		});
+
+		var backToMainButton:FlxButton = new FlxButton(150, 20, "Back to main chart", () -> subSongUI(null));
 
 		tab_group_char.add(uiTextField);
 		tab_group_char.add(cutsceneTextField);
@@ -453,10 +501,19 @@ class ChartingState extends MusicBeatState
 		tab_group_char.add(listTitleY2);
 		tab_group_char.add(duetListAdd2);
 		tab_group_char.add(duetListRemove2);
+		tab_group_char.add(syncCheckList);
+		tab_group_char.add(syncCheckList2);
+		tab_group_char.add(listTitleSync);
+		tab_group_char.add(listTitleSync2);
+		tab_group_char.add(chartButtonList);
+		tab_group_char.add(chartButtonList2);
+		tab_group_char.add(backToMainButton);
 
 		UI_box.addGroup(tab_group_char);
 		UI_box.scrollFactor.set();
 
+		refreshChartButtons(true);
+		refreshChartButtons(false);
 	}
 
 	var stepperLength:FlxUINumericStepper;
@@ -492,13 +549,25 @@ class ChartingState extends MusicBeatState
 
 		var swapSection:FlxButton = new FlxButton(10, 170, "Swap section", function()
 		{
-			for (i in 0..._song.notes[curSection].sectionNotes.length)
-			{
-				var note = _song.notes[curSection].sectionNotes[i];
-				note[1] = (note[1] + 4) % 8;
-				_song.notes[curSection].sectionNotes[i] = note;
-				updateGrid();
+			if(curSubSongChar == null) {
+				for (i in 0..._song.notes[curSection].sectionNotes.length)
+				{
+					var note = _song.notes[curSection].sectionNotes[i];
+					note[1] = (note[1] + 4) % 8;
+					_song.notes[curSection].sectionNotes[i] = note;
+					updateGrid();
+				}
+			} else {
+				var index:Int = findSubSongSectionIndex(curSubSongChar, curSection);
+				for (i in 0..._song.notes[curSection].duetSectionNotes[index][1].length)
+				{
+					var note = _song.notes[curSection].duetSectionNotes[index][1][i];
+					note[1] = (note[1] + 4) % 8;
+					_song.notes[curSection].duetSectionNotes[index][1][i] = note;
+					updateGrid();
+				}
 			}
+			
 		});
 
 		check_mustHitSection = new FlxUICheckBox(10, 30, null, null, "Must hit section", 100);
@@ -539,10 +608,10 @@ class ChartingState extends MusicBeatState
 
 		var applyLength:FlxButton = new FlxButton(100, 10, 'Apply');
 
-		var listTitleEnable:FlxUIText = new FlxUIText(10, 60, 0, "Toggle Duet Chars");
+		listTitleEnable = new FlxUIText(10, 60, 0, "Toggle Duet Chars");
 		var duetEnableList:FlxUIList = new FlxUIList(10, 100);
 		curSelectedNoteDuetList = duetEnableList;
-		var duetListAdd:FlxButton = new FlxButton(10, 200, "Add", () -> {
+		duetListAdd = new FlxButton(10, 200, "Add", () -> {
 			var text = new FlxUIInputText();
 			text.name = 'duet_note_toggle_${duetEnableArr.length}';
 			curSelectedNoteDuetList.add(text);
@@ -550,7 +619,7 @@ class ChartingState extends MusicBeatState
 			if(curSelectedNote[3] == null) curSelectedNote[3] = [text.text];
 			else curSelectedNote[3].push(text.text);
 		});
-		var duetListRemove:FlxButton = new FlxButton(10, 230, "Remove", () -> {
+		duetListRemove = new FlxButton(10, 230, "Remove", () -> {
 			if(duetEnableArr.length > 0) {
 				curSelectedNoteDuetList.remove(duetEnableArr[duetEnableArr.length - 1], true);
 				duetEnableArr.pop();
@@ -630,11 +699,35 @@ class ChartingState extends MusicBeatState
 		 */
 	}
 
+	function subSongUI(char:String) {
+		curSubSongChar = char;
+		updateGrid();
+	}
+
+	function findSubSongSectionIndex(char:String, section:Int):Int {
+		if(_song.notes[section].duetSectionNotes == null) return -1;
+		var filtered = _song.notes[section].duetSectionNotes.filter(f -> f[0] == char);
+		if(filtered != null) return _song.notes[section].duetSectionNotes.indexOf(filtered[0]);
+		else return -1;
+	}
+
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>)
 	{
 		if (id == FlxUICheckBox.CLICK_EVENT)
 		{
 			var check:FlxUICheckBox = cast sender;
+			if(check.name.startsWith("duet_sync_check_")) {
+				var index:Int = Std.parseInt(check.name.split("_")[3]);
+				_song.player1duets[index][3] = check.checked;
+				var button:FlxButton = cast chartButtonList.members[index];
+				button.visible = !check.checked;
+			} else if(check.name.startsWith("dad_duet_sync_check_")) {
+				var index = Std.parseInt(check.name.split("_")[4]);
+				_song.player2duets[index][3] = check.checked;
+				var button:FlxButton = cast chartButtonList2.members[index];
+				button.visible = !check.checked;
+			}
+			if(check.getLabel() == null) return;
 			var label = check.getLabel().text;
 			switch (label)
 			{
@@ -718,6 +811,26 @@ class ChartingState extends MusicBeatState
 				if(data != null) {
 					_song.player2duets[Std.parseInt(input.name.split("_")[3])][0] = input.text;
 				}
+			}
+		} else if(id == FlxUITabMenu.CLICK_EVENT) {
+			var menu:FlxUITabMenu = cast sender;
+			switch(menu.selected_tab_id) {
+				case "Char":
+					refreshChartButtons(true);
+					refreshChartButtons(false);
+				case "Note":
+					if(curSubSongChar != null) {
+						duetListAdd.visible = false;
+						duetListRemove.visible = false;
+						listTitleEnable.visible = false;
+					} else {
+						duetListAdd.visible = true;
+						duetListRemove.visible = true;
+						listTitleEnable.visible = true;
+					}
+			}
+			if(menu.selected_tab_id == "Char") {
+				
 			}
 		}
 
@@ -1114,14 +1227,25 @@ class ChartingState extends MusicBeatState
 	{
 		var daSec = FlxMath.maxInt(curSection, sectionNum);
 
-		for (note in _song.notes[daSec - sectionNum].sectionNotes)
-		{
-			var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
+		if(curSubSongChar == null) {
+			for (note in _song.notes[daSec - sectionNum].sectionNotes)
+			{
+				var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
 
-			var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3] == null ? [] : note[3]];
-			_song.notes[daSec].sectionNotes.push(copiedNote);
+				var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3] == null ? [] : note[3]];
+				_song.notes[daSec].sectionNotes.push(copiedNote);
+			}
+		} else {
+			var index:Int = findSubSongSectionIndex(curSubSongChar, curSection);
+			for (note in cast(_song.notes[daSec - sectionNum].duetSectionNotes[index][1], Array<Dynamic>))
+			{
+				var strum = note[0] + Conductor.stepCrochet * (_song.notes[daSec].lengthInSteps * sectionNum);
+
+				var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3] == null ? [] : note[3]];
+				_song.notes[daSec].duetSectionNotes[index][1].push(copiedNote);
+			}
 		}
-
+		
 		updateGrid();
 	}
 
@@ -1192,7 +1316,19 @@ class ChartingState extends MusicBeatState
 			curRenderedSustains.remove(curRenderedSustains.members[0], true);
 		}
 
-		var sectionInfo:Array<Dynamic> = _song.notes[curSection].sectionNotes;
+		var sectionInfo:Array<Dynamic>;
+		if(curSubSongChar == null) sectionInfo = _song.notes[curSection].sectionNotes;
+		else {
+			var index:Int = findSubSongSectionIndex(curSubSongChar, curSection);
+			if(index != -1) sectionInfo = _song.notes[curSection].duetSectionNotes[index][1];
+			else {
+				if(_song.notes[curSection].duetSectionNotes == null) _song.notes[curSection].duetSectionNotes = [];
+				var arrSub:Array<Dynamic> = [];
+				var arr:Array<Dynamic> = [curSubSongChar, arrSub];
+				_song.notes[curSection].duetSectionNotes.push(arr);
+				sectionInfo = _song.notes[curSection].duetSectionNotes[_song.notes[curSection].duetSectionNotes.length - 1][1];
+			}
+		}
 
 		if (_song.notes[curSection].changeBPM && _song.notes[curSection].bpm > 0)
 		{
@@ -1254,6 +1390,7 @@ class ChartingState extends MusicBeatState
 			changeBPM: false,
 			mustHitSection: true,
 			sectionNotes: [],
+			duetSectionNotes: [],
 			typeOfSection: 0,
 			altAnim: false,
 			altAnimNum: 0
@@ -1266,15 +1403,29 @@ class ChartingState extends MusicBeatState
 	{
 		var swagNum:Int = 0;
 
-		for (i in _song.notes[curSection].sectionNotes)
-		{
-			if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+		if(curSubSongChar == null) {
+			for (i in _song.notes[curSection].sectionNotes)
 			{
-				curSelectedNote = _song.notes[curSection].sectionNotes[swagNum];
-			}
+				if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+				{
+					curSelectedNote = _song.notes[curSection].sectionNotes[swagNum];
+				}
 
-			swagNum += 1;
+				swagNum += 1;
+			}
+		} else {
+			var index = findSubSongSectionIndex(curSubSongChar, curSection);
+			for (i in cast(_song.notes[curSection].duetSectionNotes[index][1], Array<Dynamic>))
+				{
+					if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+					{
+						curSelectedNote = _song.notes[curSection].duetSectionNotes[index][1][swagNum];
+					}
+	
+					swagNum += 1;
+				}
 		}
+		
 
 		updateGrid();
 		updateNoteUI();
@@ -1282,21 +1433,38 @@ class ChartingState extends MusicBeatState
 
 	function deleteNote(note:Note):Void
 	{
-		for (i in _song.notes[curSection].sectionNotes)
-		{
-			if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
+		if(curSubSongChar == null) {
+			for (i in _song.notes[curSection].sectionNotes)
 			{
-				FlxG.log.add('FOUND EVIL NUMBER');
-				_song.notes[curSection].sectionNotes.remove(i);
+				if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
+				{
+					FlxG.log.add('FOUND EVIL NUMBER');
+					_song.notes[curSection].sectionNotes.remove(i);
+				}
+			}
+		} else {
+			var index = findSubSongSectionIndex(curSubSongChar, curSection);
+			for (i in cast(_song.notes[curSection].duetSectionNotes[index][1], Array<Dynamic>))
+			{
+				if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
+				{
+					FlxG.log.add('FOUND EVIL NUMBER');
+					_song.notes[curSection].duetSectionNotes[index][1].remove(i);
+				}
 			}
 		}
+		
 
 		updateGrid();
 	}
 
 	function clearSection():Void
 	{
-		_song.notes[curSection].sectionNotes = [];
+		if(curSubSongChar == null) _song.notes[curSection].sectionNotes = [];
+		else {
+			var index = findSubSongSectionIndex(curSubSongChar, curSection);
+			if(index != -1) _song.notes[curSection].duetSectionNotes[index] = [];
+		}
 
 		updateGrid();
 	}
@@ -1306,6 +1474,7 @@ class ChartingState extends MusicBeatState
 		for (daSection in 0..._song.notes.length)
 		{
 			_song.notes[daSection].sectionNotes = [];
+			_song.notes[daSection].duetSectionNotes = [];
 		}
 
 		updateGrid();
@@ -1317,14 +1486,26 @@ class ChartingState extends MusicBeatState
 		var noteData = Math.floor(FlxG.mouse.x / GRID_SIZE);
 		var noteSus = 0;
 
-		_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, []]);
-
-		curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
-
-		if (FlxG.keys.pressed.CONTROL)
-		{
-			_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, []]);
+		if(curSubSongChar == null) {
+			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, []]);
+			curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				_song.notes[curSection].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, []]);
+			}
 		}
+		else {
+			var index = findSubSongSectionIndex(curSubSongChar, curSection);
+			trace(_song.notes[curSection].duetSectionNotes[index][0]);
+			if(index != -1) cast(_song.notes[curSection].duetSectionNotes[index][1], Array<Dynamic>).push([noteStrum, noteData, noteSus, []]);
+			else _song.notes[curSection].duetSectionNotes.push([curSubSongChar, [[noteStrum, noteData, noteSus, []]]]);
+			curSelectedNote = _song.notes[curSection].duetSectionNotes[index][1][_song.notes[curSection].duetSectionNotes[index][1].length + -1]; //if i put "- 1" it thinks it's a float and gives me a compile error. i love coding
+			if (FlxG.keys.pressed.CONTROL)
+			{
+				cast(_song.notes[curSection].duetSectionNotes[index][1], Array<Dynamic>).push([noteStrum, (noteData + 4) % 8, noteSus, []]);
+			}
+		}
+
 
 		trace(noteStrum);
 		trace(curSection);

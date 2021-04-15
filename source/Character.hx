@@ -42,11 +42,12 @@ class Character extends FlxSprite
 	public var isDuetChild = false;
 	public var isDuetEnabled = false;
 	public var isEnemy = false;
+	public var isDuetSync = true;
 	public var duetChildOffset:Array<Float> = [0, 0];
 	public var duetChildren:Array<Character> = [];
 	public var duetParent:Character;
 
-	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>, ?isEnemy:Bool = false, ?duetParent:Character)
+	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>, ?isEnemy:Bool = false, ?duetParent:Character, ?isDuetSync:Bool = true)
 	{
 		animOffsets = new Map<String, Array<Dynamic>>();
 		super(x, y);
@@ -62,6 +63,7 @@ class Character extends FlxSprite
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 		this.isEnemy = isEnemy;
+		this.isDuetSync = isDuetSync;
 
 		var tex:FlxAtlasFrames;
 		antialiasing = true;
