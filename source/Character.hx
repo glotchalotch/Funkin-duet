@@ -917,7 +917,10 @@ class Character extends FlxSprite
 			}
 		}
 		if(AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN") {
-			if(isDuetEnabled || !isDuetSync) animation.play(AnimName, Force, Reversed, Frame);
+			if(isDuetEnabled || !isDuetSync) {
+				if(isDuetSync) asyncNoteCountdown = animation.getByName(AnimName).numFrames;
+				animation.play(AnimName, Force, Reversed, Frame);
+			}
 		} else animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
 		if (animation.curAnim == null) {

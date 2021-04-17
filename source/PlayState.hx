@@ -2780,15 +2780,18 @@ class PlayState extends MusicBeatState
 								{
 									case 0:
 										c.playAnim('singLEFT', true);
+										c.asyncNoteCountdown = c.animation.getByName("singLEFT").numFrames;
 									case 1:
 										c.playAnim('singDOWN', true);
+										c.asyncNoteCountdown = c.animation.getByName("singDOWN").numFrames;
 									case 2:
 										c.playAnim('singUP', true);
+										c.asyncNoteCountdown = c.animation.getByName("singUP").numFrames;
 									case 3:
 										c.playAnim('singRIGHT', true);
+										c.asyncNoteCountdown = c.animation.getByName("singRIGHT").numFrames;
 								}
 								if(note[2] > 0) c.curAsyncSus = [note[2], Conductor.songPosition, note[1]];
-								c.asyncNoteCountdown = 1;
 							}
 							trace("GAMER HIT");
 							curSectionDuetPlayed[index][1].push(note);
