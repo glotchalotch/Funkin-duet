@@ -47,6 +47,10 @@ class Character extends FlxSprite
 	public var duetChildren:Array<Character> = [];
 	public var duetParent:Character;
 
+	public var asyncNoteCountdown:Int = 0;
+	public var asyncHoldTimer:Float = 0;
+	public var curAsyncSus:Array<Dynamic>;
+
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false, ?duetChildren:Array<Character>, ?isDuetChild:Bool = false, ?duetChildOffset:Array<Float>, ?isEnemy:Bool = false, ?duetParent:Character, ?isDuetSync:Bool = true)
 	{
 		animOffsets = new Map<String, Array<Dynamic>>();
@@ -780,12 +784,38 @@ class Character extends FlxSprite
 
 			if (curCharacter == 'dad')
 				dadVar = 6.1;
-			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001 && !isDuetChild)
 			{
 				dance();
 				holdTimer = 0;
 			}
 		}
+
+		if(asyncNoteCountdown > 0) asyncNoteCountdown--;
+
+		if(curAsyncSus != null) {
+			if ((curAsyncSus[0] + curAsyncSus[1]) > Conductor.songPosition)
+			{
+				if (animation.curAnim.curFrame > 2)
+				{
+					switch (curAsyncSus[2] % 4)
+					{
+						case 0:
+							playAnim('singLEFT', true);
+						case 1:
+							playAnim('singDOWN', true);
+						case 2:
+							playAnim('singUP', true);
+						case 3:
+							playAnim('singRIGHT', true);
+					}
+				}
+				asyncNoteCountdown = 1;
+			} else {
+				curAsyncSus = null;
+			}
+		}
+		
 
 		switch (curCharacter)
 		{
@@ -805,7 +835,7 @@ class Character extends FlxSprite
 	public function dance()
 	{
 		trace('boogie');
-		if (!debugMode)
+		if (!debugMode && !(asyncNoteCountdown > 0))
 		{
 			switch (curCharacter)
 			{
@@ -885,10 +915,9 @@ class Character extends FlxSprite
 					c.playAnim(AnimName, Force, Reversed, Frame);
 				}
 			}
-		}		
-		trace(AnimName);
+		}
 		if(AnimName == "singLEFT" || AnimName == "singRIGHT" || AnimName == "singUP" || AnimName == "singDOWN") {
-			if(isDuetEnabled) animation.play(AnimName, Force, Reversed, Frame);
+			if(isDuetEnabled || !isDuetSync) animation.play(AnimName, Force, Reversed, Frame);
 		} else animation.play(AnimName, Force, Reversed, Frame);
 		var animName = "";
 		if (animation.curAnim == null) {
@@ -923,6 +952,7 @@ class Character extends FlxSprite
 				danced = !danced;
 			}
 		}
+		trace(curCharacter + " " + animation.curAnim.name);
 	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)

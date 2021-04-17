@@ -101,6 +101,8 @@ class PlayState extends MusicBeatState
 	private var camHUD:FlxCamera;
 	private var camGame:FlxCamera;
 
+	var curSectionDuetPlayed:Array<Array<Dynamic>> = [];
+
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 
 	var halloweenBG:FlxSprite;
@@ -1269,7 +1271,7 @@ class PlayState extends MusicBeatState
 		if(SONG.player1duets != null) {
 			trace('the boys');
 			for(child in SONG.player1duets) {
-				var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]], false, boyfriend);
+				var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]], false, boyfriend, child[3]);
 				boyfriend.duetChildren.push(guy);
 				add(guy);
 			}
@@ -1277,7 +1279,7 @@ class PlayState extends MusicBeatState
 		if(SONG.player2duets != null) {
 			trace('the boys season 2');
 			for(child in SONG.player2duets) {
-				var guy:Character = new Character(dad.x, dad.y, child[0], false, [], true, [child[1], child[2]], false, dad);
+				var guy:Character = new Character(dad.x, dad.y, child[0], false, [], true, [child[1], child[2]], false, dad, child[3]);
 				dad.duetChildren.push(guy);
 				add(guy);
 			}
@@ -2636,7 +2638,7 @@ class PlayState extends MusicBeatState
 
 				if(daNote.canBeHit && daNote.duetSwitch && !daNote.duetSwitchTriggered && daNote.mustPress) {
 					if(daNote.duetSwitchChar.contains("player")) boyfriend.isDuetEnabled = !boyfriend.isDuetEnabled;
-					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
+					var children:Array<Character> = boyfriend.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter) && f.isDuetSync);
 					for(child in children) {
 						child.isDuetEnabled = !child.isDuetEnabled;
 					}
@@ -2647,7 +2649,7 @@ class PlayState extends MusicBeatState
 				{
 					if(daNote.duetSwitch && !daNote.duetSwitchTriggered) {
 						if(daNote.duetSwitchChar.contains("player")) dad.isDuetEnabled = !dad.isDuetEnabled;
-						var children:Array<Character> = dad.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter));
+						var children:Array<Character> = dad.duetChildren.filter(f -> daNote.duetSwitchChar.contains(f.curCharacter) && f.isDuetSync);
 						for(child in children) {
 							child.isDuetEnabled = !child.isDuetEnabled;
 						}
@@ -2745,8 +2747,84 @@ class PlayState extends MusicBeatState
 						notes.remove(daNote, true);
 						daNote.destroy();
 				}
+
+				
+				
 				
 			});
+
+			//i spent over 2 hours trying to figure out why this wasnt working right and it was because of one line of code. i love video games
+			if(curStep >= 0 && SONG.notes[Std.int(curStep / 16)].duetSectionNotes != null) {
+				for(daArr in SONG.notes[Std.int(curStep / 16)].duetSectionNotes) {
+					var char:String = cast daArr[0];
+					var notes:Array<Array<Dynamic>> = cast daArr[1];
+					var bfElegible:Array<Character> = boyfriend.duetChildren == null ? [] : boyfriend.duetChildren.filter(f -> f.curCharacter == char && !f.isDuetSync);
+					var dadElegible:Array<Character> = dad.duetChildren == null ? [] : dad.duetChildren.filter(f -> f.curCharacter == char && !f.isDuetSync);
+					var filtered = curSectionDuetPlayed.filter(f -> f[0] == char);
+					var index:Int;
+					if(filtered.length == 0) {
+						index = curSectionDuetPlayed.length;
+						curSectionDuetPlayed.push([char, []]);
+					} else index = curSectionDuetPlayed.indexOf(filtered[0]);
+					for(note in notes) {
+						if(!curSectionDuetPlayed[index][1].contains(note) && note[0] <= Conductor.songPosition) {
+							var forBF:Bool = true;
+							if ((SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] > 4)
+								|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] < 4))
+								forBF = false;
+							var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
+							for (c in eligible)
+							{
+								c.animation.curAnim.stop();
+								switch (note[1] % 4)
+								{
+									case 0:
+										c.playAnim('singLEFT', true);
+									case 1:
+										c.playAnim('singDOWN', true);
+									case 2:
+										c.playAnim('singUP', true);
+									case 3:
+										c.playAnim('singRIGHT', true);
+								}
+								if(note[2] > 0) c.curAsyncSus = [note[2], Conductor.songPosition, note[1]];
+								c.asyncNoteCountdown = 1;
+							}
+							trace("GAMER HIT");
+							curSectionDuetPlayed[index][1].push(note);
+						} else {
+							/*if(note[2] > 0) {
+								var forBF:Bool = true;
+								if ((SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] > 4)
+									|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] < 4))
+									forBF = false;
+								var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
+								for (c in eligible)
+								{
+									if (c.asyncHoldTimer > 0)
+									{
+										trace(c.asyncHoldTimer);
+										switch (note[1] % 4)
+										{
+											case 0:
+												c.playAnim('singLEFT', true);
+											case 1:
+												c.playAnim('singDOWN', true);
+											case 2:
+												c.playAnim('singUP', true);
+											case 3:
+												c.playAnim('singRIGHT', true);
+										}
+									}
+								}
+							}*/
+							
+						}
+						
+					}
+					
+				}
+			}
 		}
 
 		if (!inCutscene)
@@ -3510,10 +3588,17 @@ class PlayState extends MusicBeatState
 			if(!boyfriend.isDuetEnabled) boyfriend.dance();
 			if(boyfriend.duetChildren != null) {
 				for(c in boyfriend.duetChildren) {
-					if(!c.isDuetEnabled) c.dance();
+					c.dance();
 				}
 			}
 		}
+
+		/*if(dad.duetChildren != null) {
+			for(c in dad.duetChildren) {
+				if(!c.isDuetSync && !c.animation.curAnim.name.startsWith("sing")) c.dance();
+				trace("we dancin");
+			}
+		}*/
 
 		if (curBeat % 8 == 7 && SONG.isHey)
 		{
