@@ -480,7 +480,7 @@ class ChartingState extends MusicBeatState
 			}
 		});
 
-		var backToMainButton:FlxButton = new FlxButton(250, 190, "Main Chart", () -> subSongUI(null));
+		var backToMainButton:FlxButton = new FlxButton(250, 50, "Main Chart", () -> subSongUI(null));
 
 		tab_group_char.add(uiTextField);
 		tab_group_char.add(cutsceneTextField);
