@@ -14,7 +14,7 @@ class Main extends Sprite
 
 		#if desktop
 		var settingsJson = CoolUtil.parseJson(Assets.getText("assets/data/options.json"));
-		Application.current.window.title = settingsJson.windowTitle;
+		if(settingsJson.windowTitle != null) Application.current.window.title = settingsJson.windowTitle;
 		#end
 
 		addChild(new FlxGame(0, 0, TitleState, 1, 60, 120, settingsJson.skipSplash));
