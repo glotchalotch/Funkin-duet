@@ -611,6 +611,15 @@ class DialogueBox extends FlxSpriteGroup
 				portraitCustom.animation.addByPrefix('enter', 'Boyfriend portrait enter', 24, false);
 				swagDialogue.sounds = [FlxG.sound.load(clickSounds[2], 0.6)];
 				portraitCustom.visible = false;
+			case 'char-senpai':
+				portraitCustom = new FlxSprite(0, 40);
+				portraitCustom.frames = FlxAtlasFrames.fromSparrow('assets/images/weeb/senpaiPortrait.png', 'assets/images/weeb/senpaiPortrait.xml');
+				portraitCustom.setGraphicSize(Std.int(portraitCustom.width * 0.9 * PlayState.daPixelZoom));
+				portraitCustom.animation.addByPrefix('enter', 'Senpai Portrait Enter', 24, false);
+				swagDialogue.sounds = [FlxG.sound.load(clickSounds[2], 0.6)];
+				portraitCustom.visible = false;
+			//TODO: add senpai angry and spirit because it doesn't look like they actually have portraits
+
 			default:
 				var realChar = curCharacter.substr(5);
 				portraitCustom = new FlxSprite(0, 40);
