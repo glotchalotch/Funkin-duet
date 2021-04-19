@@ -664,7 +664,8 @@ class DialogueBox extends FlxSpriteGroup
 				portraitCustom.visible = false;
 		}
 		if(curFlipped) {
-			switch(curCharacter) {
+			switch (curCharacter)
+			{
 				case "dad":
 					portraitLeft.flipX = true;
 				case "bf":
@@ -673,6 +674,16 @@ class DialogueBox extends FlxSpriteGroup
 					portraitCustom.flipX = true;
 			}
 		}
+		else
+			switch (curCharacter)
+			{
+				case "dad":
+					portraitLeft.flipX = false;
+				case "bf":
+					portraitRight.flipX = false;
+				default:
+					portraitCustom.flipX = false;
+			}
 		// swagDialogue.text = ;
 		if (portraitCustom != null) {
 			portraitCustom.updateHitbox();
@@ -740,7 +751,7 @@ class DialogueBox extends FlxSpriteGroup
 		if(~/^:.+:f /.match(dialogueList[0])) {
 			curFlipped = true;
 			lengthAdd = 3;
-		}
+		} else curFlipped = false;
 		dialogueList[0] = dialogueList[0].substr(splitName[1].length + lengthAdd).trim();
 	}
 }
