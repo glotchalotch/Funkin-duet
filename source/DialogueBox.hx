@@ -532,7 +532,6 @@ class DialogueBox extends FlxSpriteGroup
 				portraitCustom = new FlxSprite(0, 40);
 				portraitCustom.frames = FlxAtlasFrames.fromSparrow('assets/images/gfPortrait.png', 'assets/images/gfPortrait.xml');
 				portraitCustom.setGraphicSize(Std.int(portraitCustom.width * 0.9));
-				flipX = true;
 				portraitCustom.animation.addByPrefix('enter', 'Boyfriend portrait enter', 24, false);
 				swagDialogue.sounds = [FlxG.sound.load(clickSounds[2], 0.6)];
 				portraitCustom.visible = false;
