@@ -1292,12 +1292,15 @@ class PlayState extends MusicBeatState
 		add(boyfriend);
 		trace('bf cheeks');
 
-		var doof:DialogueBox = new DialogueBox(false, dialogue);
-		trace('doofensmiz');
-		// doof.x += 70;
-		// doof.y = FlxG.height * 0.5;
-		doof.scrollFactor.set();
-		doof.finishThing = startCountdown;
+		var doof:DialogueBox = null;
+		if(alwaysDoCutscenes || isStoryMode) {
+			doof = new DialogueBox(false, dialogue);
+			trace('doofensmiz');
+			// doof.x += 70;
+			// doof.y = FlxG.height * 0.5;
+			doof.scrollFactor.set();
+			doof.finishThing = startCountdown;
+		}
 		Conductor.songPosition = -5000;
 		trace('prepare your strumlime');
 		strumLine = new FlxSprite(0, 50).makeGraphic(FlxG.width, 10);
@@ -1386,7 +1389,7 @@ class PlayState extends MusicBeatState
 		practiceDieIcon.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
 		healthTxt.cameras = [camHUD];
-		doof.cameras = [camHUD];
+		if(doof != null) doof.cameras = [camHUD];
 		accuracyTxt.cameras = [camHUD];
 		difficTxt.cameras = [camHUD];
 		practiceDieIcon.visible = false;
