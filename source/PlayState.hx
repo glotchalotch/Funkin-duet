@@ -1797,7 +1797,7 @@ class PlayState extends MusicBeatState
 			#end
 		}	else
 			vocals = new FlxSound();
-
+		vocals.onComplete = () -> vocals.volume = 0;
 		FlxG.sound.list.add(vocals);
 
 		notes = new FlxTypedGroup<Note>();
