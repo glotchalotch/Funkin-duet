@@ -186,6 +186,10 @@ How to use:
     "preferredSave" is which save slot to use by default (i think)
     "windowTitle" changes the window title on startup
     "skipSplash" skips the HaxeFlixel splash screen
+  Misc Things:
+    In the Song tab of the chart editor, you can switch between 3/4 and 4/4 time using
+    the radio buttons that are labelled as such. You might want to clear the whole song if
+    you're switching to 3/4 time by using the "Clear song" button.
 
 
 ADDING DUETS: THE GAME: THE MOVIE: THE GUIDE
