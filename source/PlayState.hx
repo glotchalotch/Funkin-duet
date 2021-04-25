@@ -224,7 +224,7 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
-		if(SONG.timeSignature[0] == 3 && SONG.timeSignature[1] == 4) stepSkipOffset = 4;
+		if(SONG.timeSignature != null && SONG.timeSignature[0] == 3 && SONG.timeSignature[1] == 4) stepSkipOffset = 4;
 
 		switch (SONG.song.toLowerCase())
 		{
