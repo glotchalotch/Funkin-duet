@@ -33,6 +33,8 @@ typedef SwagSong =
 	var uiType:String;
 	var isSpooky:Null<Bool>;
 	var isHey:Null<Bool>;
+
+	var timeSignature:Array<Int>;
 }
 
 class Song
@@ -58,6 +60,8 @@ class Song
 	public var cutsceneType:String = "none";
 	public var uiType:String = 'normal';
 	public var isHey:Null<Bool> = false;
+
+	public var timeSignature:Array<Int> = [4, 4];
 	public function new(song, notes, bpm)
 	{
 		this.song = song;

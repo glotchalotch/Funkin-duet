@@ -1,5 +1,7 @@
 package;
 
+import flixel.addons.ui.FlxClickArea;
+import flixel.addons.ui.FlxUIRadioGroup;
 import flixel.addons.ui.FlxUIButton;
 import flixel.addons.ui.FlxUIText;
 import flixel.addons.ui.interfaces.IFlxUIWidget;
@@ -102,6 +104,8 @@ class ChartingState extends MusicBeatState
 	var leftIcon:HealthIcon;
 	var rightIcon:HealthIcon;
 
+	var stepsPerSection:Int = 16;
+
 	var duetArr:Array<Dynamic> = []; // [character string, offset x, offset y, is sync]
 	var duetArr2:Array<Dynamic> = [];
 	var curSelectedNoteDuetList:FlxUIList;
@@ -183,7 +187,8 @@ class ChartingState extends MusicBeatState
 				uiType: 'normal',
 				bfCamOffset: [0, 0],
 				player2duets: [],
-				enemyCamOffset: [0, 0]
+				enemyCamOffset: [0, 0],
+				timeSignature: [4, 4]
 			};
 		}
 
@@ -191,6 +196,7 @@ class ChartingState extends MusicBeatState
 		if(_song.player2duets == null) _song.player2duets = [];
 		if(_song.bfCamOffset == null) _song.bfCamOffset = [0, 0];
 		if(_song.enemyCamOffset == null) _song.enemyCamOffset = [0, 0];
+		if(_song.timeSignature == null) _song.timeSignature = [4, 4];
 
 		FlxG.mouse.visible = true;
 		//FlxG.save.bind('save1', 'bulbyVR');
@@ -285,6 +291,17 @@ class ChartingState extends MusicBeatState
 		var isSpookyCheck = new FlxUICheckBox(10, 280,null,null,"Is Spooky", 100);
 		var loadAutosaveBtn:FlxButton = new FlxButton(reloadSongJson.x, reloadSongJson.y + 30, 'load autosave', loadAutosave);
 
+		var radioGroup = new FlxUIRadioGroup(90, 65, ["radio_ts_3", "radio_ts_4"], ["3/4", "4/4"]);
+
+		switch(_song.timeSignature[0]) {
+			case 3:
+				radioGroup.selectedId = "radio_ts_3";
+			case 4:
+				radioGroup.selectedId = "radio_ts_4";
+		}
+
+		var clearSongButton:FlxButton = new FlxButton(reloadSongJson.x + reloadSongJson.width + 10, saveButton.y, "Clear song", () -> clearSong());
+
 		var stepperSpeed:FlxUINumericStepper = new FlxUINumericStepper(10, 80, 0.1, 1, 0.1, 10, 1);
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
@@ -353,6 +370,8 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(enemyCamText2);
 		tab_group_song.add(enemyCamOffsetStepper1);
 		tab_group_song.add(enemyCamOffsetStepper2);
+		tab_group_song.add(radioGroup);
+		tab_group_song.add(clearSongButton);
 
 		UI_box.addGroup(tab_group_song);
 		UI_box.scrollFactor.set();
@@ -588,7 +607,7 @@ class ChartingState extends MusicBeatState
 		check_changeBPM = new FlxUICheckBox(10, 60, null, null, 'Change BPM', 100);
 		check_changeBPM.name = 'check_changeBPM';
 
-		tab_group_section.add(stepperLength);
+		//tab_group_section.add(stepperLength);
 		tab_group_section.add(stepperSectionBPM);
 		tab_group_section.add(stepperCopy);
 		tab_group_section.add(check_mustHitSection);
@@ -852,6 +871,14 @@ class ChartingState extends MusicBeatState
 			if(menu.selected_tab_id == "Char") {
 				
 			}
+		} else if(id == FlxUIRadioGroup.CLICK_EVENT) {
+			var group:FlxUIRadioGroup = cast sender;
+			switch(group.selectedId) {
+				case "radio_ts_3":
+					changeTimeSignature(3, 4);
+				case "radio_ts_4":
+					changeTimeSignature(4, 4);
+			}
 		}
 
 		// FlxG.log.add(id + " WEED " + sender + " WEED " + data + " WEED " + params);
@@ -877,7 +904,7 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[i].changeBPM) {
 				daBPM = _song.notes[i].bpm;
 			}
-			daPos += 4 * (1000 * 60 / daBPM);
+			daPos += _song.timeSignature[0] * (1000 * 60 / daBPM);
 		}
 		return daPos;
 	}
@@ -1431,8 +1458,25 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
+	private function changeTimeSignature(top:Int, bottom:Int) {
+		if((top != 3 && top != 4) || bottom != 4) return;
+		_song.timeSignature = [top, bottom];
+		for(section in _song.notes) {
+			switch(top) {
+				case 3:
+					section.lengthInSteps = 12;
+					stepsPerSection = 12;
+				case 4:
+					section.lengthInSteps = 16;
+					stepsPerSection = 16;
+			}
+		}
+		updateSectionUI();
+	}
+
 	private function addSection(lengthInSteps:Int = 16):Void
 	{
+		lengthInSteps = stepsPerSection;
 		var sec:SwagSection = {
 			lengthInSteps: lengthInSteps,
 			bpm: _song.bpm,
@@ -1534,7 +1578,6 @@ class ChartingState extends MusicBeatState
 		var noteStrum = getStrumTime(dummyArrow.y) + sectionStartTime();
 		var noteData = Math.floor(FlxG.mouse.x / GRID_SIZE);
 		var noteSus = 0;
-
 		if(curSubSongChar == null) {
 			_song.notes[curSection].sectionNotes.push([noteStrum, noteData, noteSus, []]);
 			curSelectedNote = _song.notes[curSection].sectionNotes[_song.notes[curSection].sectionNotes.length - 1];

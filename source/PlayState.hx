@@ -224,6 +224,8 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
+		if(SONG.timeSignature[0] == 3 && SONG.timeSignature[1] == 4) stepSkipOffset = 4;
+
 		switch (SONG.song.toLowerCase())
 		{
 			default:
@@ -2325,7 +2327,6 @@ class PlayState extends MusicBeatState
 		perfectModeOld = false;
 		#end
 
-
 		switch (curStage)
 		{
 			case 'philly':
@@ -2754,7 +2755,7 @@ class PlayState extends MusicBeatState
 			});
 
 			//i spent over 2 hours trying to figure out why this wasnt working right and it was because of one line of code. i love video games
-			if(curStep >= 0 && SONG.notes[Std.int(curStep / 16)].duetSectionNotes != null) {
+			if(curStep >= 0 && SONG.notes[Std.int(curStep / 16)] != null && SONG.notes[Std.int(curStep / 16)].duetSectionNotes != null) {
 				for(daArr in SONG.notes[Std.int(curStep / 16)].duetSectionNotes) {
 					var char:String = cast daArr[0];
 					var notes:Array<Array<Dynamic>> = cast daArr[1];
