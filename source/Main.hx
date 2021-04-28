@@ -10,6 +10,9 @@ class Main extends Sprite
 {
 	public function new()
 	{
+		#if !sys
+			throw("Hey! FNFM+ only compiles for desktop, not web or other sys.");
+		#end
 		super();
 
 		#if desktop

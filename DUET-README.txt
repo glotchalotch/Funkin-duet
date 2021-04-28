@@ -4,7 +4,7 @@ The following readme covers the features of Modding+, the features of Duet+, and
 Hopefully it's intuitive enough. If you have questions, hit me up.
 First section covers Modding+ and misc features, second section only covers duet features.
 If you find bugs or things to improve in this mod, report it at https://github.com/glotchalotch/Funkin-duet
-(MAKE SURE BUGS AREN'T IN THE VANILLA GAME BEFORE REPORTING!!!)
+(MAKE SURE BUGS AREN'T IN THE VANILLA GAME OR MODDING+ BEFORE REPORTING!!!)
 
 How to use:
   Custom Songs:

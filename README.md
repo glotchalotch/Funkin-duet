@@ -8,6 +8,12 @@ I made this for one specific thing I'm doing, but I thought other people might l
 
 Check out FNF Modding Plus: https://github.com/TheDrawingCoder-Gamer/Funkin
 
+Any mods made with this mod must have express permission from the creator of songs included. 
+(for example, if you include the Whitty Mod, you should have express permission from Nate Anim8, KadeDev, and SockClip.
+I at least would like to see the main author and a majority of secondary offers get express permission)
+If an author gives express disapproval, and the mod is up, you should take your mod down. I own the code to this mod so I can (and will)
+take down mods that don't follow this rule.
+Download on gamebanana: https://gamebanana.com/gamefiles/14264
 Play the original game: https://github.com/ninjamuffin99/Funkin
 ## Credits / shoutouts
 
@@ -41,6 +47,7 @@ hscript
 flixel-ui
 tjson
 json2object
+uniontypes
 ```
 
 So for each of those type `haxelib install [library]` so shit like `haxelib install hscript`
