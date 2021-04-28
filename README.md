@@ -13,8 +13,7 @@ Play the original game: https://github.com/ninjamuffin99/Funkin
 Any mods made with this mod must have express permission from the creator of songs included. 
 (for example, if you include the Whitty Mod, you should have express permission from Nate Anim8, KadeDev, and SockClip.
 I at least would like to see the main author and a majority of secondary offers get express permission)
-If an author gives express disapproval, and the mod is up, you should take your mod down. I own the code to this mod so I can (and will)
-take down mods that don't follow this rule.
+If an author gives express disapproval, and the mod is up, you should take your mod down.
 
 ## Credits / shoutouts
 
