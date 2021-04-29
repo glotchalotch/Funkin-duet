@@ -348,14 +348,12 @@ class PlayState extends MusicBeatState
 				remove(dad);
 				for(child in dad.duetChildren) {
 					dad.duetChildren.remove(child);
-					dad.duetCharIndices.set(child.curCharacter, []);
 					child.destroy();
 				}
 			if (drawBehind & BEHIND_BF != 0)
 				remove(boyfriend);
 				for(child in boyfriend.duetChildren) {
 					boyfriend.duetChildren.remove(child);
-					boyfriend.duetCharIndices.set(child.curCharacter, []);
 					child.destroy();
 				}
 			
@@ -371,8 +369,6 @@ class PlayState extends MusicBeatState
 					for(child in SONG.player2duets) {
 						var guy:Character = new Character(dad.x, dad.y, child[0], false, [], true, [child[1], child[2]], false, dad, child[3]);
 						dad.duetChildren.push(guy);
-						if(!dad.duetCharIndices.exists(child[0])) dad.duetCharIndices.set(child[0], []);
-						dad.duetCharIndices.get(child[0]).push(dad.duetChildren.length);
 						add(guy);
 					}
 				}
@@ -382,9 +378,6 @@ class PlayState extends MusicBeatState
 					for(child in SONG.player1duets) {
 						var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]], false, boyfriend, child[3]);
 						boyfriend.duetChildren.push(guy);
-						if(!boyfriend.duetCharIndices.exists(child[0])) boyfriend.duetCharIndices.set(child[0], []);
-						boyfriend.duetCharIndices.get(child[0]).push(boyfriend.duetChildren.length - 1);
-						trace(boyfriend.duetCharIndices);
 						add(guy);
 					}
 				}
