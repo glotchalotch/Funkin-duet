@@ -338,14 +338,26 @@ class PlayState extends MusicBeatState
 			luaSprites.set(toBeCalled, sprite);
 			// and I quote:
 			// shitty layering but it works!
+			
+			// shitty layering indeed - glotch
 			if (drawBehind & BEHIND_GF != 0)
 			{
 				remove(gf);
 			}
 			if (drawBehind & BEHIND_DAD != 0)
 				remove(dad);
+				for(child in dad.duetChildren) {
+					dad.duetChildren.remove(child);
+					dad.duetCharIndices.set(child.curCharacter, []);
+					child.destroy();
+				}
 			if (drawBehind & BEHIND_BF != 0)
 				remove(boyfriend);
+				for(child in boyfriend.duetChildren) {
+					boyfriend.duetChildren.remove(child);
+					boyfriend.duetCharIndices.set(child.curCharacter, []);
+					child.destroy();
+				}
 			
 			trace(":)");
 			add(sprite);
@@ -356,20 +368,23 @@ class PlayState extends MusicBeatState
 			if (drawBehind & BEHIND_DAD != 0)
 				// this new lua stuff is great and all but now i have to deal with it
 				if(SONG.player2duets != null) {
-					trace('the boys season 2');
 					for(child in SONG.player2duets) {
 						var guy:Character = new Character(dad.x, dad.y, child[0], false, [], true, [child[1], child[2]], false, dad, child[3]);
 						dad.duetChildren.push(guy);
+						if(!dad.duetCharIndices.exists(child[0])) dad.duetCharIndices.set(child[0], []);
+						dad.duetCharIndices.get(child[0]).push(dad.duetChildren.length);
 						add(guy);
 					}
 				}
 				add(dad);
 			if (drawBehind & BEHIND_BF != 0)
 				if(SONG.player1duets != null) {
-					trace('the boys');
 					for(child in SONG.player1duets) {
 						var guy:Character = new Character(boyfriend.x, boyfriend.y, child[0], false, [], true, [child[1], child[2]], false, boyfriend, child[3]);
 						boyfriend.duetChildren.push(guy);
+						if(!boyfriend.duetCharIndices.exists(child[0])) boyfriend.duetCharIndices.set(child[0], []);
+						boyfriend.duetCharIndices.get(child[0]).push(boyfriend.duetChildren.length - 1);
+						trace(boyfriend.duetCharIndices);
 						add(guy);
 					}
 				}
