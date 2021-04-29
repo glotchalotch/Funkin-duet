@@ -22,12 +22,20 @@ class OutdatedSubState extends MusicBeatState
 			32);
 		txt.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();
+		txt.y -= 100;
 		add(txt);
+		var txt2:FlxText = new FlxText(0, 0, FlxG.width,
+			"hi, this is glotch. i didn't write the above message and i'd like to formally apologize for the behavior of bulbyvr.\n\n unless youre on a mac lol\n\np.s. press enter to continue ",
+			32);
+		txt2.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
+		txt2.screenCenter();
+		txt2.y += 100;
+		add(txt2);
 	}
 
 	override function update(elapsed:Float)
 	{
-		if (controls.BACK)
+		if (controls.ACCEPT)
 		{
 			leftState = true;
 			FlxG.switchState(new MainMenuState());
