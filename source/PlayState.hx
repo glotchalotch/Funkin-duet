@@ -98,6 +98,8 @@ class PlayState extends MusicBeatState
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
 
+	private var stepsPerSection:Int = 16;
+
 	private var camFollow:FlxObject;
 
 	private static var prevCamFollow:FlxObject;
@@ -1129,7 +1131,10 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
-		if(SONG.timeSignature != null && SONG.timeSignature[0] == 3 && SONG.timeSignature[1] == 4) stepSkipOffset = 4;
+		if(SONG.timeSignature != null && SONG.timeSignature[0] == 3 && SONG.timeSignature[1] == 4) {
+			stepsPerSection = 12;
+			timeSignature = [3, 4];
+		}
 
 		backgroundgroup = new FlxTypedGroup<BeatSprite>();
 		foregroundgroup  = new FlxTypedGroup<BeatSprite>();
@@ -2794,7 +2799,7 @@ class PlayState extends MusicBeatState
 			// Conductor.lastSongPos = FlxG.sound.music.time;
 		}
 
-		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null)
+		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / stepsPerSection)] != null)
 		{
 			if (curBeat % 4 == 0)
 			{
@@ -2804,7 +2809,8 @@ class PlayState extends MusicBeatState
 			
 			setAllVar("mustHit", PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection);
 			#end
-			if (camFollow.x != dad.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+
+			if (camFollow.x != dad.getMidpoint().x + 150 && !PlayState.SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection)
 			{
 				camFollow.setPosition(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 				// camFollow.setPosition(lucky.getMidpoint().x - 120, lucky.getMidpoint().y + 210);
@@ -2834,7 +2840,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-			if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
+			if (PlayState.SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
 			{
 				camFollow.setPosition((boyfriend.getMidpoint().x - 100 + boyfriend.followCamX), (boyfriend.getMidpoint().y - 100+boyfriend.followCamY));
 				#if windows
@@ -3022,15 +3028,15 @@ class PlayState extends MusicBeatState
 					if (SONG.song != 'Tutorial')
 						camZooming = true;
 					var altAnim:String = "";
-					
-					if (SONG.notes[Math.floor(curStep / 16)] != null)
+
+					if (SONG.notes[Math.floor(curStep / stepsPerSection)] != null)
 					{
-						if ((SONG.notes[Math.floor(curStep / 16)].altAnimNum > 0 && SONG.notes[Math.floor(curStep / 16)].altAnimNum != null) || SONG.notes[Math.floor(curStep / 16)].altAnim)
+						if ((SONG.notes[Math.floor(curStep / stepsPerSection)].altAnimNum > 0 && SONG.notes[Math.floor(curStep / 16)].altAnimNum != null) || SONG.notes[Math.floor(curStep / 16)].altAnim)
 							// backwards compatibility shit
-							if (SONG.notes[Math.floor(curStep / 16)].altAnimNum == 1 || SONG.notes[Math.floor(curStep / 16)].altAnim)
+							if (SONG.notes[Math.floor(curStep / stepsPerSection)].altAnimNum == 1 || SONG.notes[Math.floor(curStep / 16)].altAnim)
 								altAnim = '-alt';
-							else if (SONG.notes[Math.floor(curStep / 16)].altAnimNum != 0)
-								altAnim = '-' + SONG.notes[Math.floor(curStep / 16)].altAnimNum+'alt';
+							else if (SONG.notes[Math.floor(curStep / stepsPerSection)].altAnimNum != 0)
+								altAnim = '-' + SONG.notes[Math.floor(curStep / stepsPerSection)].altAnimNum+'alt';
 					}
 					#if windows
 					callAllLua("playerTwoSing", [], null);
@@ -3138,8 +3144,8 @@ class PlayState extends MusicBeatState
 			});
 
 			//i spent over 2 hours trying to figure out why this wasnt working right and it was because of one line of code. i love video games
-			if(curStep >= 0 && SONG.notes[Std.int(curStep / 16)] != null && SONG.notes[Std.int(curStep / 16)].duetSectionNotes != null) {
-				for(daArr in SONG.notes[Std.int(curStep / 16)].duetSectionNotes) {
+			if(curStep >= 0 && SONG.notes[Std.int(curStep / stepsPerSection)] != null && SONG.notes[Std.int(curStep / stepsPerSection)].duetSectionNotes != null) {
+				for(daArr in SONG.notes[Std.int(curStep / stepsPerSection)].duetSectionNotes) {
 					var char:String = cast daArr[0];
 					var notes:Array<Array<Dynamic>> = cast daArr[1];
 					var bfElegible:Array<Character> = boyfriend.duetChildren == null ? [] : boyfriend.duetChildren.filter(f -> f.curCharacter == char && !f.isDuetSync);
@@ -3153,8 +3159,8 @@ class PlayState extends MusicBeatState
 					for(note in notes) {
 						if(!curSectionDuetPlayed[index][1].contains(note) && note[0] <= Conductor.songPosition) {
 							var forBF:Bool = true;
-							if ((SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] > 4)
-								|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] < 4))
+							if ((SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] > 4)
+								|| (!SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] < 4))
 								forBF = false;
 							var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
 							for (c in eligible)
@@ -3953,18 +3959,18 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
 		}
 
-		if (SONG.notes[Math.floor(curStep / 16)] != null)
+		if (SONG.notes[Math.floor(curStep / stepsPerSection)] != null)
 		{
-			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
+			if (SONG.notes[Math.floor(curStep / stepsPerSection)].changeBPM)
 			{
-				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
+				Conductor.changeBPM(SONG.notes[Math.floor(curStep / stepsPerSection)].bpm);
 				FlxG.log.add('CHANGED BPM!');
 			}
 			// else
 			// Conductor.changeBPM(SONG.bpm);
 
 			// Dad doesnt interupt his own notes
-			if (SONG.notes[Math.floor(curStep / 16)].mustHitSection)
+			if (SONG.notes[Math.floor(curStep / stepsPerSection)].mustHitSection)
 				dad.dance();
 				if(dad.duetChildren != null) {
 					for(c in dad.duetChildren) {

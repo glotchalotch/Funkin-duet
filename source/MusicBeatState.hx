@@ -14,9 +14,7 @@ class MusicBeatState extends FlxUIState
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
-	private var stepSkipOffset:Int = 0;
-	private var curStepOffset:Int = 0;
-	private var shouldSkipStep:Int = 0;
+	private var timeSignature:Array<Int> = [4, 4];
 	private var controls(get, never):Controls;
 
 	inline function get_controls():Controls
@@ -50,7 +48,7 @@ class MusicBeatState extends FlxUIState
 
 	private function updateBeat():Void
 	{
-		curBeat = Math.floor(curStep / 4);
+		curBeat = Math.floor(curStep / timeSignature[0]);
 	}
 
 	private function updateCurStep():Void
@@ -67,18 +65,11 @@ class MusicBeatState extends FlxUIState
 		}
 
 		curStep = lastChange.stepTime + Math.floor((Conductor.songPosition - lastChange.songTime) / Conductor.stepCrochet);
-		if(curStep % (16 - stepSkipOffset) == 0 && curStep > 0) {
-			if(shouldSkipStep == 0) {
-				curStepOffset += stepSkipOffset;
-			}
-			shouldSkipStep++;
-		} else shouldSkipStep = 0;
-		curStep += curStepOffset;
 	}
 
 	public function stepHit():Void
 	{
-		if (curStep % 4 == 0)
+		if (curStep % timeSignature[0] == 0)
 			beatHit();
 	}
 
