@@ -835,6 +835,7 @@ class ChartingState extends MusicBeatState
 					_song.player1duets[Std.parseInt(input.name.split("_")[2])][0] = input.text;
 				}
 			} else if(input.name.startsWith("duet_note_toggle_")) {
+				trace(input.name);
 				curSelectedNote[3][Std.parseInt(input.name.split("_")[3])] = input.text;
 			} else if(input.name.startsWith("dad_duet_chars_")) {
 				if(data != null) {
@@ -1362,9 +1363,17 @@ class ChartingState extends MusicBeatState
 		if (curSelectedNote != null) {
 			stepperSusLength.value = curSelectedNote[2];
 			if(prevSelectedNote != curSelectedNote) {
-				if(curSelectedNote[3] == 0) curSelectedNote[3] = [];
+				if(curSelectedNote[3].length == null) curSelectedNote[3] = [];
+				trace(duetEnableArr);
+				trace(duetEnableArr.length);
+				trace(curSelectedNoteDuetList.length);
+				for(m in curSelectedNoteDuetList.members) {
+					m.destroy();
+				}
+				curSelectedNoteDuetList.clear();
 				duetEnableArr.splice(0, duetEnableArr.length);
-				curSelectedNoteDuetList.members.splice(0, curSelectedNoteDuetList.length);
+				trace(duetEnableArr.length);
+				trace(curSelectedNoteDuetList.length);
 				var casted:Array<String> = cast curSelectedNote[3];
 				if(casted.length > 0) {
 					for(gaming in casted) {
@@ -1499,7 +1508,7 @@ class ChartingState extends MusicBeatState
 		if(curSubSongChar == null) {
 			for (i in _song.notes[curSection].sectionNotes)
 			{
-				if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+				if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
 				{
 					curSelectedNote = _song.notes[curSection].sectionNotes[swagNum];
 				}
@@ -1510,7 +1519,7 @@ class ChartingState extends MusicBeatState
 			var index = findSubSongSectionIndex(curSubSongChar, curSection);
 			for (i in cast(_song.notes[curSection].duetSectionNotes[index][1], Array<Dynamic>))
 				{
-					if (i.strumTime == note.strumTime && i.noteData % 4 == note.noteData)
+					if (i[0] == note.strumTime && i[1] % 4 == note.noteData)
 					{
 						curSelectedNote = _song.notes[curSection].duetSectionNotes[index][1][swagNum];
 					}
