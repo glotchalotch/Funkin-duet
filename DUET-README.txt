@@ -215,8 +215,7 @@ ASYNCHRONOUS CHARACTERS: THINGS TO KNOW:
 
 In the Note tab (all of this affects SYNCHRONOUS characters only):
 - When a note is selected, you can click Add or Remove to *toggle* the state of a character.
-  (If a note isn't selected the game will crash so make sure it's selected. The only way to select a note
-  at this time is to add a new one or re-add an old one.)
+  (Make sure your note is selected. This can be done using Ctrl-Click or by adding a note.)
 - If they're disabled, they will do an idle animation as opposed to singing.
 - All characters start disabled apart from bf and the enemy.
 - The toggle is inclusive to the note, meaning that the toggle will affect them on that note, not after.
