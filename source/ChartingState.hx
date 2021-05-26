@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.ui.FlxUIPopup;
 import flixel.addons.ui.FlxClickArea;
 import flixel.addons.ui.FlxUIRadioGroup;
 import flixel.addons.ui.FlxUIButton;
@@ -626,6 +627,15 @@ class ChartingState extends MusicBeatState
 
 	var stepperSusLength:FlxUINumericStepper;
 
+	function openNullPopup() {
+		var nullPopup:FlxUIPopup = new FlxUIPopup();
+		nullPopup.quickSetup("Note Not Selected", "Please select a note using Ctrl+Click.", ["OK"]);
+		nullPopup.openCallback = () -> {
+			cast(cast(nullPopup.members[0], FlxUI).members[5], FlxUIButton).onUp.callback = () -> nullPopup.close();
+		}
+		openSubState(nullPopup);
+	}
+
 	function addNoteUI():Void
 	{
 		var tab_group_note = new FlxUI(null, UI_box);
@@ -641,19 +651,27 @@ class ChartingState extends MusicBeatState
 		var duetEnableList:FlxUIList = new FlxUIList(10, 100);
 		curSelectedNoteDuetList = duetEnableList;
 		duetListAdd = new FlxButton(10, 200, "Add", () -> {
-			var text = new FlxUIInputText();
-			text.name = 'duet_note_toggle_${duetEnableArr.length}';
-			curSelectedNoteDuetList.add(text);
-			duetEnableArr.push(text);
-			if(curSelectedNote[3] == null) curSelectedNote[3] = [text.text];
-			else curSelectedNote[3].push(text.text);
+			if(curSelectedNote != null) {
+				var text = new FlxUIInputText();
+				text.name = 'duet_note_toggle_${duetEnableArr.length}';
+				curSelectedNoteDuetList.add(text);
+				duetEnableArr.push(text);
+				if (curSelectedNote[3] == null)
+					curSelectedNote[3] = [text.text];
+				else
+					curSelectedNote[3].push(text.text);
+			} else openNullPopup();
+			
 		});
 		duetListRemove = new FlxButton(10, 230, "Remove", () -> {
-			if(duetEnableArr.length > 0) {
-				curSelectedNoteDuetList.remove(duetEnableArr[duetEnableArr.length - 1], true);
-				duetEnableArr.pop();
-				curSelectedNote[3].pop();
-			}
+			if(curSelectedNote != null) {
+				if (duetEnableArr.length > 0)
+				{
+					curSelectedNoteDuetList.remove(duetEnableArr[duetEnableArr.length - 1], true);
+					duetEnableArr.pop();
+					curSelectedNote[3].pop();
+				}
+			} else openNullPopup();
 		});
 
 		tab_group_note.add(stepperSusLength);
@@ -800,8 +818,10 @@ class ChartingState extends MusicBeatState
 			}
 			else if (wname == 'note_susLength')
 			{
-				curSelectedNote[2] = nums.value;
-				updateGrid();
+				if(curSelectedNote != null) {
+					curSelectedNote[2] = nums.value;
+					updateGrid();
+				} else openNullPopup();
 			}
 			else if (wname == 'section_bpm')
 			{
@@ -1364,16 +1384,11 @@ class ChartingState extends MusicBeatState
 			stepperSusLength.value = curSelectedNote[2];
 			if(prevSelectedNote != curSelectedNote) {
 				if(curSelectedNote[3].length == null) curSelectedNote[3] = [];
-				trace(duetEnableArr);
-				trace(duetEnableArr.length);
-				trace(curSelectedNoteDuetList.length);
 				for(m in curSelectedNoteDuetList.members) {
 					m.destroy();
 				}
 				curSelectedNoteDuetList.clear();
 				duetEnableArr.splice(0, duetEnableArr.length);
-				trace(duetEnableArr.length);
-				trace(curSelectedNoteDuetList.length);
 				var casted:Array<String> = cast curSelectedNote[3];
 				if(casted.length > 0) {
 					for(gaming in casted) {
