@@ -1580,7 +1580,7 @@ class ChartingState extends MusicBeatState
 		if(curSubSongChar == null) _song.notes[curSection].sectionNotes = [];
 		else {
 			var index = findSubSongSectionIndex(curSubSongChar, curSection);
-			if(index != -1) _song.notes[curSection].duetSectionNotes[index] = [];
+			if(index != -1) _song.notes[curSection].duetSectionNotes.splice(index, 1);
 		}
 
 		updateGrid();
