@@ -1711,7 +1711,7 @@ class ChartingState extends MusicBeatState
 			if(s.duetSectionNotes != null) {
 				for (d in s.duetSectionNotes)
 				{
-					if (d[1].length == 0)
+					if (d[1] != null && d[1].length == 0)
 						s.duetSectionNotes.remove(d);
 				}
 				if(s.duetSectionNotes.length == 0) s.duetSectionNotes = null;
