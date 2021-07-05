@@ -2783,7 +2783,7 @@ class PlayState extends MusicBeatState
 							if (!curSectionDuetPlayed[index][1].contains(note) && note[0] <= Conductor.songPosition)
 							{
 								var forBF:Bool = true;
-								if ((SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] > 4)
+								if ((SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] >= 4)
 									|| (!SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] < 4))
 									forBF = false;
 								var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
