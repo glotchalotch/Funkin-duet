@@ -2763,7 +2763,9 @@ class PlayState extends MusicBeatState
 			});
 
 			//i spent over 2 hours trying to figure out why this wasnt working right and it was because of one line of code. i love video games
-			if(curStep >= 0 && SONG.notes[Std.int(curStep / stepsPerSection)] != null && SONG.notes[Std.int(curStep / stepsPerSection)].duetSectionNotes != null) {
+			if(curStep >= 0 
+				&& SONG.notes[Std.int(curStep / stepsPerSection)] != null 
+				&& SONG.notes[Std.int(curStep / stepsPerSection)].duetSectionNotes != null) {
 				for(daArr in SONG.notes[Std.int(curStep / stepsPerSection)].duetSectionNotes) {
 					var char:String = cast daArr[0];
 					var notes:Array<Array<Dynamic>> = cast daArr[1];
@@ -2775,63 +2777,70 @@ class PlayState extends MusicBeatState
 						index = curSectionDuetPlayed.length;
 						curSectionDuetPlayed.push([char, []]);
 					} else index = curSectionDuetPlayed.indexOf(filtered[0]);
-					for(note in notes) {
-						if(!curSectionDuetPlayed[index][1].contains(note) && note[0] <= Conductor.songPosition) {
-							var forBF:Bool = true;
-							if ((SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] > 4)
-								|| (!SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] < 4))
-								forBF = false;
-							var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
-							for (c in eligible)
+					if(notes != null) {
+						for (note in notes)
+						{
+							if (!curSectionDuetPlayed[index][1].contains(note) && note[0] <= Conductor.songPosition)
 							{
-								c.animation.curAnim.stop();
-								switch (note[1] % 4)
-								{
-									case 0:
-										c.playAnim('singLEFT', true);
-										c.asyncNoteCountdown = c.animation.getByName("singLEFT").numFrames;
-									case 1:
-										c.playAnim('singDOWN', true);
-										c.asyncNoteCountdown = c.animation.getByName("singDOWN").numFrames;
-									case 2:
-										c.playAnim('singUP', true);
-										c.asyncNoteCountdown = c.animation.getByName("singUP").numFrames;
-									case 3:
-										c.playAnim('singRIGHT', true);
-										c.asyncNoteCountdown = c.animation.getByName("singRIGHT").numFrames;
-								}
-								if(note[2] > 0) c.curAsyncSus = [note[2], Conductor.songPosition, note[1]];
-							}
-							trace("GAMER HIT");
-							curSectionDuetPlayed[index][1].push(note);
-						} else {
-							/*if(note[2] > 0) {
 								var forBF:Bool = true;
-								if ((SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] > 4)
-									|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] < 4))
+								if ((SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] > 4)
+									|| (!SONG.notes[Std.int(curStep / stepsPerSection)].mustHitSection && note[1] < 4))
 									forBF = false;
 								var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
 								for (c in eligible)
 								{
-									if (c.asyncHoldTimer > 0)
+									c.animation.curAnim.stop();
+									switch (note[1] % 4)
 									{
-										trace(c.asyncHoldTimer);
-										switch (note[1] % 4)
+										case 0:
+											c.playAnim('singLEFT', true);
+											c.asyncNoteCountdown = c.animation.getByName("singLEFT").numFrames;
+										case 1:
+											c.playAnim('singDOWN', true);
+											c.asyncNoteCountdown = c.animation.getByName("singDOWN").numFrames;
+										case 2:
+											c.playAnim('singUP', true);
+											c.asyncNoteCountdown = c.animation.getByName("singUP").numFrames;
+										case 3:
+											c.playAnim('singRIGHT', true);
+											c.asyncNoteCountdown = c.animation.getByName("singRIGHT").numFrames;
+									}
+									if (note[2] > 0)
+										c.curAsyncSus = [note[2], Conductor.songPosition, note[1]];
+								}
+								trace("GAMER HIT");
+								curSectionDuetPlayed[index][1].push(note);
+							}
+							else
+							{
+								/*if(note[2] > 0) {
+									var forBF:Bool = true;
+									if ((SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] > 4)
+										|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && note[1] < 4))
+										forBF = false;
+									var eligible:Array<Character> = forBF ? bfElegible : dadElegible;
+									for (c in eligible)
+									{
+										if (c.asyncHoldTimer > 0)
 										{
-											case 0:
-												c.playAnim('singLEFT', true);
-											case 1:
-												c.playAnim('singDOWN', true);
-											case 2:
-												c.playAnim('singUP', true);
-											case 3:
-												c.playAnim('singRIGHT', true);
+											trace(c.asyncHoldTimer);
+											switch (note[1] % 4)
+											{
+												case 0:
+													c.playAnim('singLEFT', true);
+												case 1:
+													c.playAnim('singDOWN', true);
+												case 2:
+													c.playAnim('singUP', true);
+												case 3:
+													c.playAnim('singRIGHT', true);
+											}
 										}
 									}
-								}
-							}*/
-							
-						}
+								}*/
+							}
+					}
+					
 						
 					}
 					
